@@ -1,39 +1,118 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# Jump Ninja Jump
 
-Welcome,
+Jump Ninja Jump is a simple, interactive 2D platformer 
 
-This is the Code Institute student template for Codeanywhere. We have preinstalled all of the tools you need to get started. It's perfectly ok to use this template as the basis for your project submissions.
+The site can be accessed [here](https://endamagennis.github.io/kaboomjs-ninja-game/)
 
-You can safely delete this README.md file, or change it for your own project. Please do read it at least once, though! It contains some important information about Codeanywhere and the extensions we use. Some of this information has been updated since the video content was created. The last update to this file was: **May 11th, 2023**
+---
+## Background to Jump Ninja Jump
 
-## Codeanywhere Reminders
+I have loved playing game for most of my life and in recent years have begun learning game development as a hobby, through Unity. This project has given me the opportunity
+to expand my wheelhouse.
 
-To run a frontend (HTML, CSS, Javascript only) application in Codeanywhere, in the terminal, type:
+---
+## User Stories
 
-`python3 -m http.server`
+* As a user, I want to understand the control scheme
+* As a user, I want to have an accesible control scheme
+* As a user, I want to be able to play on desktop and mobile
+* As a user, I want to enjoy the game, free of glitches and bugs
+* As a user, I want to have an enjoyable experience and have clear progression in the game
+* As a user, I want to have a reason to play multiple times
 
-A button should appear to click: _Open Preview_ or _Open Browser_.
+## Features
 
-To run a frontend (HTML, CSS, Javascript only) application in Codeanywhere with no-cache, you can use this alias for `python3 -m http.server`.
++ ### Navbar
 
-`http_server`
+ --- 
++ ### Home Page
+    
+--- 
 
-To run a backend Python file, type `python3 app.py`, if your Python file is named `app.py` of course.
+--- 
++ ### Footer
 
-A button should appear to click: _Open Preview_ or _Open Browser_.
+--- 
++ ### Thank you page
 
-In Codeanywhere you have superuser security privileges by default. Therefore you do not need to use the `sudo` (superuser do) command in the bash terminal in any of the lessons.
+--- 
+## Technologies Used
 
-To log into the Heroku toolbelt CLI:
+--- 
+## Design
 
-1. Log in to your Heroku account and go to _Account Settings_ in the menu under your avatar.
-2. Scroll down to the _API Key_ and click _Reveal_
-3. Copy the key
-4. In Codeanywhere, from the terminal, run `heroku_config`
-5. Paste in your API key when asked
+### Colour Scheme
 
-You can now use the `heroku` CLI program - try running `heroku apps` to confirm it works. This API key is unique and private to you so do not share it. If you accidentally make it public then you can create a new one with _Regenerate API Key_.
+---
+### Wireframes
+
+#### Mobile devices
+
+#### Tablets
+
+#### Desktop
+
+--- 
+## Testing
++ ### Responsive Design
+
+### Edge
+
+### Firefox
+
+
++ ### Manual Testing
+
+| Feature | Action | Expectation | Pass | Comment |
+| --- | --- | --- | --- | --- |
+
+---
++ ### Bugs
+
+---
+## Validator testing
++ ### [HTML Validator](https://validator.w3.org/)
+            
++ ### [CSS Validator](https://jigsaw.w3.org/css-validator/)
+      
++ ### Accessibility and performance 
+
+---
+## Deployment
+- This site was deployed using Github Pages
+- A repository was created on Github from the [Code Institute Full Template](https://github.com/Code-Institute-Org/ci-full-template)
+    ![Create a Repo](documentation/create-a-repo.png)
+- The repository url was copied and input as a workspace in [Codeanywhere](https://app.codeanywhere.com/)
+    ![Clone a repo](documentation/clone-repo.png)
+    ![Link to Github](documentation/link-to-git.png)
+    ![Create a workspace](documentation/create-workspace.png)
+- The HTML and CSS were edited in the workspace
+- Using the built-in terminal, changes were git added, git committed, and git pushed to the main branch of the Github repository
+    ![Workspace and Terminal](documentation/workspace-and-terminal.png)
+- From the main branch of the [Github Repository](https://endamagennis.github.io/tuatha_transport/index.html), settings was selected
+    ![Navigate to settings](documentation/navigate-to-settings.png)
+- From there I navigated to the Pages tab
+    ![Navigate to pages](documentation/navigate-to-pages.png)
+- Under Build and Deployment, I navigated to Branch, selected main, selected root, and clicked save
+    ![Select and save](documentation/save-page.png)
+- Github then built and deployed the site in a matter of minutes
 
 ---
 
-Happy coding!
+## Future improvements
+
+---
+## Credits
+
++ #### Content
+        
++ #### Media
+    
++ #### Tools
+
+---
+
+## Acknowledgments
+
+---
+
