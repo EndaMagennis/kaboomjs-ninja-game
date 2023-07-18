@@ -1,14 +1,18 @@
-const canvas = document.querySelector("canvas");
-
+let gameCanvas = document.querySelector("#game-canvas")
+//initialising kaboom environment
 const k = kaboom({
     fullscreen: true,
-    width: 600,
-    canvas: canvas,
-    height: 400,
+    canvas: gameCanvas,
     scale: 2,
-    debug: true,
-    background: [1, 1, 1, 1],
+    background: [0,0,0,0]
 });
+//attempting to resize canvas for mobile
+function resizeCanvas(){
+    const scale =(gameCanvas.width/ gameCanvas.height)
+    gameCanvas.style.transform = `scale(${scale})`
+} 
+
+window.addEventListener('resize', resizeCanvas);
 
 // loading assets for game
 //loading player sprite animations.
@@ -27,66 +31,165 @@ let playerJumpAnim = loadSprite('playerJump', 'assets/sprites/kunoichi/kunoichi-
     anims: {'jumpAnim': {from: 1, to: 9, loop: false}}
 });
 
-//loading tile and object assets
-let grass1 = loadSprite('grass1', 'assets/sprites/objects/grass/grass-1.png');
-let grass2 = loadSprite('grass2', 'assets/sprites/objects/grass/grass-2.png');
-let grass3 = loadSprite('grass3', 'assets/sprites/objects/grass/grass-3.png');
+let playerAttack = loadSprite('playerAttack', 'assets/sprites/kunoichi/kunoichi-attack-2.png', {
+    sliceX: 8, sliceY: 1,
+    anims: {'attackAnim': {from: 1, to: 7, loop: false}}
+});
 
-let box1 = loadSprite('box1', 'assets/sprites/objects/boxes/box-1.png');
-let box2 = loadSprite('box2', 'assets/sprites/objects/boxes/box-2.png');
-let box3 = loadSprite('box3', 'assets/sprites/objects/boxes/box-3.png');
+//loading enemy sprite animations
+let enemyIdleAnim = loadSprite('enemyIdle', 'assets/sprites/samurai/samurai-idle.png', {
+    sliceX: 6, sliceY: 1,
+    anims: {'enemyIdleAnim': {from: 1, to: 5, loop: true}}
+});
+
+let enemyMoveAnim = loadSprite('enemyMove', 'assets/sprites/samurai/samurai-walk.png', {
+    sliceX: 9, sliceY: 1,
+    anims: {'enemyWalkAnim': {from: 1, to: 8, loop: true}}
+})
+
+let enemyAttack1 = loadSprite('enemyAttack1', 'assets/sprites/samurai/samurai-attack_1.png', {
+    sliceX: 5, sliceY: 1,
+    anims: {'enemyAttack1Anim':{from: 1, to: 4, loop: false}}
+})
+
+//taking coordinates from the tilesheet and creating individual tiles
+loadSpriteAtlas('assets/tiles/tileset-1.png', {
+    'grassFloor': {
+        x: 32,
+        y: 0,
+        width: 32,
+        height: 16
+    },
+    'grassRaised': {
+        x: 16,
+        y: 0,
+        width: 72,
+        height: 64,
+    },
+    'dirt': {
+        x: 32,
+        y: 32,
+        width: 32,
+        height: 32
+    },
+    'walkableDirt': {
+        x: 32,
+        y: 32,
+        width: 32,
+        height: 32
+    },
+    'caveEntrance': {
+        x: 16,
+        y: 84,
+        width: 16,
+        height: 64
+    },
+    'caveBack' : {
+        x: 40,
+        y: 96,
+        width: 32,
+        height: 32
+    },
+    'caveTop' : {
+        x: 32,
+        y: 80,
+        width: 64,
+        height: 16,
+    },
+    'caveExit' :{
+        x: 72,
+        y: 96,
+        width: 16,
+        height: 64
+    }
+})
 
 //loading background image
-let gameBackground = loadSprite("","");
 
 //creating a player game object
 const player = make([
     sprite(playerIdleAnim),//default animation
-    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0,32)}),//sets a rectangle to collide
-    scale(0.5),//sets sprite scale
+    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0, 42)}),//sets a rectangle to collide
+    scale(1),//sets sprite scale
     anchor('center'),//anchors rectangle to center of sprite
     body(),// gives player physics
-    pos(101, 200),// starting position
+    pos(100, 600),// starting position
     {
-        speed: 200,//movement speed
+        speed: 400,//movement speed
+        isAttacking: false,
     },
     "player",//tag which can be referenced for collision detection
 ]);
 
+//creating an enemy game object
+const enemy = make([
+    sprite('enemyIdle'),
+    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0, 42)}),
+    scale(1),
+    anchor('center'),
+    body(),
+    pos(400 , 600),
+    state("idle",["idle", "attack", "move"]),//states for AI to enter/exit
+    {
+        speed: 400,
+        isAttacking: false,
+    },
+    "enemy"
+]);
+
+
 //setting the level configurations
 const levelConfig = {
-    tileWidth:16,//pixel width of each tile
-    tileHeight:16,//pixel height of each tile
+    tileWidth:32,//pixel width of each tile
+    tileHeight:32,//pixel height of each tile
     //the tiles object uses key/value pairs of a string and an array
     //to instantiate objects on the map
     tiles: {
         "_": () => [//setting the '=' symbol to represent the ground
-            sprite(grass1),
+            sprite('grassFloor'),
             area(),
             body({isStatic: true}),//gives physics but holds in place
-            scale(1),
+            scale(2),
             "ground",//tag which can be referenced for collision detection
         ],
         "+": () => [
-            sprite(grass2),
-            scale(1),
-            area(),
-            body({isStatic: true}),
-            "ground"
-        ],
-        "~": () => [
-            sprite(grass3),
-            scale(1),
-            area(),
+            sprite('grassRaised'),
+            scale(2),
+            area({shape: new Rect(vec2(0), 72, 32), offset: vec2(0, 0)}),
+            anchor('center'),
             body({isStatic: true}),
             "ground"
         ],
         "#": () =>[
-            sprite(box1),
-            scale(1),
+            sprite('dirt'),
+            scale(2),
+            anchor('top'),
+        ],
+        "~": () => [
+            sprite('walkableDirt'),
             area(),
-            body({isStatic: true}),
-            "obstacle"
+            body({isStatic: true}),//gives physics but holds in place
+            scale(2),
+            "ground"
+        ],
+        "|": () =>[
+            sprite('caveEntrance'),
+            anchor('center'),
+            scale(2),
+        ],
+        "/": () =>[
+            sprite('caveExit'),
+            anchor('center'),
+            scale(2)
+        ],
+        "-": () => [
+            sprite('caveTop'),
+            scale(2),
+        ],
+        "£": () => [
+            sprite('caveBack'),
+            anchor('top'),
+            scale(1),
         ]
     }
 };
@@ -94,33 +197,34 @@ const levelConfig = {
 //the map is an array of strings, which holds the tile objects and renders
 //their sprites
 const map = [
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|                                                                                                       |",
-    "|~+_+~+_+++~_+_~+_+~~_+++~~+_+~++_+_++_+_+~+~_+++~_+_+_~+~___+_+~_+~+_+~+_+~_+_~+_+++_~+~+_~++~+_+_~_+~+~",
-    "|_+~_+~_+~_+~_+~_~+~_+_+~_+~+_~+_~+_+_~+~+~+_+_~~_~_+~~~+_~~+_~_~+__~~+_+_~~~+_~+_+~_+_~~+_+~~~__+~+__~+_",
-
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                                                               ",
+    "                                          _                                    ",
+    "                                                                               ",
+    "                                           +  _                                ",
+    "  # # # # #                                                                    ",
+    "            ________________________                                 +         ",
+    "  # # # # #_ - - - - - - - - - - -# # # # # # # # # # # # # #                  ",
+    "          # £££££££££££££££££££££   _____________________                      ",
+    "  # # # #  |£££££££££££££££££££££ # # # # # # # # # # # # # #   +              ",
+    " _________##£££££££££££££££££££££/#___________                                _",
+    "  # # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ # # # # # # # # # # # # # # # # # # # # # # "
 ]
 
 //creating funtions to handle player movement
 function idle(){
+    player.isAttacking = false;
     player.use(sprite('playerIdle'));
     player.play('idleAnim');
 };
@@ -146,18 +250,32 @@ function moveLeft(){
 };
 
 function playerJump(){
-    if(player.curAnim() !== 'jumpAnim' && player.isGrounded() && !player.hasJumped){
+    if(player.curAnim() !== 'jumpAnim' && player.isGrounded()){
         player.use(sprite('playerJump'));
         player.play('jumpAnim');
-        player.jump(400);
+        player.jump(600);
     }
 };
+
+function attack(){
+    player.isAttacking = true;
+    console.log(player.isAttacking);
+
+    if(player.curAnim() !== 'attackAnim' && player.isGrounded()){
+        player.use(sprite('playerAttack'));
+        player.play('attackAnim');
+    }
+}
 
 //creating a function to handle inputs
 function handleInputs(){
     //onKeyDown is a built in method which registers continuous press
     onKeyDown('d',() =>{
         moveRight();
+    })
+
+    onKeyPress('e', () => {
+        attack();
     })
 
     //onKeyDown('right', ()=>{
@@ -182,16 +300,65 @@ function handleInputs(){
         playerJump();
     })
 };
+ 
+function main(){
+    addLevel(map, levelConfig);
+    camScale(0.8);
+    setGravity(1000); 
+    add(player);
+    add(enemy);
 
-//adding level to the scene
-addLevel(map, levelConfig);
-setGravity(1000);
-add(player);
-player.play('idleAnim')
-//calling the handle inputs funtion
-handleInputs();
-//allowing camera to follow player
-player.onUpdate(()=>{
+    player.play('idleAnim');
+    enemy.play('enemyIdleAnim');
+    //calling the handle inputs funtion
+    handleInputs();
+    //allowing camera to follow player
+    player.onUpdate(()=>{
     camPos(player.pos);
     }
-)
+)}
+
+scene('MainMenu', ()=>{
+    const menu = add([
+        text("HELLO"),
+    ])
+    onKeyPress('space', ()=>{
+        go('MainGame');
+    })
+})
+
+scene('MainGame', () =>{
+    addLevel(map, levelConfig);
+    camScale(0.8);
+    setGravity(1000); 
+    add(player);
+    add(enemy);
+
+    player.play('idleAnim');
+    enemy.play('enemyIdleAnim');
+    //calling the handle inputs funtion
+    handleInputs();
+    //allowing camera to follow player
+    player.onUpdate(()=>{
+    camPos(player.pos);
+    },
+    //onUpdate is a built-in function which is called each frame
+    onUpdate(()=>{
+    if(player.curAnim() !== 'runAnim' && player.curAnim() !== 'jumpAnim' && player.isGrounded() && player.curAnim() !== 'attackAnim'){
+        idle();
+    };
+
+    if(player.curAnim() !== 'jumpAnim' && !player.isGrounded() && player.heightDelta > 0) {
+        player.use(sprite('playerJump'));
+        player.play('jumpAnim');
+    };
+
+    if(player.direction === 'left'){
+        player.flipX = true;
+    } else{
+        player.flipX = false;
+    };
+})
+)})
+//adding level to the scene
+go('MainMenu');
