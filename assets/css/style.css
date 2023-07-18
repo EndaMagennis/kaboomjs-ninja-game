@@ -32,9 +32,9 @@ footer{
     display: flex;
     width: 100%;
     border: 3px solid red;
-    background-image: 
-        blue
-        url('assets/backgrounds/background-2.png')
+    background: 
+        red
+        url('../backgrounds/background-2.png')
         center center / cover
         no-repeat
         fixed;
