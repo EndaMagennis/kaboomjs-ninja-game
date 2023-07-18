@@ -1,0 +1,41 @@
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    display: flex;
+    height: auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: blue;
+    text-align: center;
+}
+
+header{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px;
+    border-bottom: 2px solid white;
+    justify-content: center;
+    align-content: center;
+}
+
+footer{
+    border-top: 1px solid white;
+    width: 100%;
+}
+
+#game-canvas {
+    display: flex;
+    width: 100%;
+    border: 3px solid red;
+    background-image: 
+        blue
+        url('assets/backgrounds/background-2.png')
+        center center / cover
+        no-repeat
+        fixed;
+}
