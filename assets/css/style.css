@@ -4,7 +4,8 @@
 }
 
 body{
-    display: flex;
+    width: 100%;
+    display: flex;;
     height: auto;
     flex-direction: column;
     align-items: center;
@@ -14,7 +15,6 @@ body{
 }
 
 header{
-    display: flex;
     flex-direction: column;
     width: 100%;
     padding: 10px;
@@ -31,6 +31,7 @@ footer{
 #game-canvas {
     display: flex;
     width: 100%;
+    height: 600px;
     border: 3px solid red;
     background: 
         red
@@ -38,4 +39,18 @@ footer{
         center center / cover
         no-repeat
         fixed;
+}
+
+@media screen and (max-width: 500px) {
+    header{
+        display: hidden;
+    }
+    footer{
+        display: hidden;
+    }
+
+    #game-canvas{
+        width: 100%;
+        height: auto;
+    }
 }
