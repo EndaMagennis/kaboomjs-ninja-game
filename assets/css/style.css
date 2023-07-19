@@ -29,9 +29,8 @@ footer{
 }
 
 #game-canvas {
-    display: flex;
-    width: 100%;
-    height: 600px;
+    width: 66%;
+    height: 800px;
     border: 3px solid red;
     background: 
         red

@@ -3,16 +3,11 @@ let gameCanvas = document.querySelector("#game-canvas")
 const k = kaboom({
     fullscreen: true,
     canvas: gameCanvas,
+    width: 600,
+    height: 400,
     scale: 2,
     background: [0,0,0,0]
 });
-//attempting to resize canvas for mobile
-function resizeCanvas(){
-    const scale =(gameCanvas.width/ gameCanvas.height)
-    gameCanvas.style.transform = `scale(${scale})`
-} 
-
-window.addEventListener('resize', resizeCanvas);
 
 // loading assets for game
 //loading player sprite animations.
@@ -101,6 +96,24 @@ loadSpriteAtlas('assets/tiles/tileset-1.png', {
         y: 96,
         width: 16,
         height: 64
+    },
+    'tree1' :{
+        x: 260,
+        y: 0,
+        width: 32,
+        height: 32
+    },
+    'bush': {
+        x: 224,
+        y: 32,
+        width: 62,
+        height: 16
+    },
+    'mushrooms': {
+        x: 270,
+        y: 32,
+        width: 64,
+        height: 16
     }
 })
 
@@ -189,7 +202,22 @@ const levelConfig = {
         "£": () => [
             sprite('caveBack'),
             anchor('top'),
-            scale(1),
+            scale(2),
+        ],
+        "^": () => [
+            sprite('tree1'),
+            anchor('center'),
+            scale(2)
+        ],
+        "&": () => [
+            sprite('bush'),
+            anchor('top'),
+            scale(2)
+        ],
+        "*": () => [
+            sprite('mushrooms'),
+            anchor('top'),
+            scale(2)
         ]
     }
 };
@@ -204,22 +232,22 @@ const map = [
     "                                                                               ",
     "                                                                               ",
     "                                                                               ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  ",
     "                                                                               ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  ",
     "                                                                               ",
-    "                                                                               ",
-    "                                                                               ",
-    "                                                                               ",
-    "                                                                               ",
-    "                                          _                                    ",
-    "                                                                               ",
-    "                                           +  _                                ",
-    "  # # # # #                                                                    ",
-    "            ________________________                                 +         ",
-    "  # # # # #_ - - - - - - - - - - -# # # # # # # # # # # # # #                  ",
-    "          # £££££££££££££££££££££   _____________________                      ",
-    "  # # # #  |£££££££££££££££££££££ # # # # # # # # # # # # # #   +              ",
-    " _________##£££££££££££££££££££££/#___________                                _",
-    "  # # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ # # # # # # # # # # # # # # # # # # # # # # "
+    "  # # # # # # # # # # # # # # __________ # # # # # # # # # # # # # # # # # #  ",
+    "                              # # # # # #         ^ & &                          ",
+    "  #&#&# # # # # # # # # # # # # # # # # # # # # #____________ # # # # # # # #  ",
+    " ___________                                      # # # # # #                  ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #^# # # # #  ",
+    "  # # # # # #^#&#&# #^# # # # # # # # # # # # # # # # # # # # #   ________     ",
+    "           _____________________                                + # # # # # #  ",
+    "  # # # # #- - - - - - - - - --   # # # # # # # # # # # # # # # # # # # # # #  ",
+    "            £££££££££££££££££££££                                              ",
+    "  #*#^# # #|£££££££££££££££££££££ # #^# #^# # # # #&#&# # # # # # # # # # # #  ",
+    " _________ #£*£££££££££££££*£££££/#___________   ____________                  ",
+    "  # # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~# # # # # # # # # # # # # # # # # # # # # #  "
 ]
 
 //creating funtions to handle player movement
@@ -274,14 +302,11 @@ function handleInputs(){
         moveRight();
     })
 
+    //onKeyPress is a built in method which registers an instance of a key press
     onKeyPress('e', () => {
         attack();
     })
-
-    //onKeyDown('right', ()=>{
-    //    moveRight();
-    //})
-
+    
     //onKeyRelease is a built in method which registers when a button is released
     onKeyRelease('d', () => {
         idle();
@@ -295,9 +320,12 @@ function handleInputs(){
         idle();
     })
 
-    //onKeyPress is a built in method which registers an instance of a key press
     onKeyPress('space', () => {
         playerJump();
+    })
+
+    onKeyPress('p', () => {
+        go('PauseMenu');
     })
 };
  
@@ -344,21 +372,30 @@ scene('MainGame', () =>{
     },
     //onUpdate is a built-in function which is called each frame
     onUpdate(()=>{
-    if(player.curAnim() !== 'runAnim' && player.curAnim() !== 'jumpAnim' && player.isGrounded() && player.curAnim() !== 'attackAnim'){
-        idle();
-    };
+        if(player.curAnim() !== 'runAnim' && player.curAnim() !== 'jumpAnim' && player.isGrounded() && player.curAnim() !== 'attackAnim'){
+            idle();
+        };
 
-    if(player.curAnim() !== 'jumpAnim' && !player.isGrounded() && player.heightDelta > 0) {
-        player.use(sprite('playerJump'));
-        player.play('jumpAnim');
-    };
+        if(player.curAnim() !== 'jumpAnim' && !player.isGrounded() && player.heightDelta > 0) {
+            player.use(sprite('playerJump'));
+            player.play('jumpAnim');
+        };
 
-    if(player.direction === 'left'){
-        player.flipX = true;
-    } else{
-        player.flipX = false;
-    };
-})
+        if(player.direction === 'left'){
+            player.flipX = true;
+        } else{
+            player.flipX = false;
+        };
+    })
 )})
+
+scene('PauseMenu', () =>{
+    const menu = add([
+        text("Paused"),
+    ])
+    onKeyPress('space', ()=>{
+        go('MainGame');
+    })
+})
 //adding level to the scene
-go('MainMenu');
+go('MainGame');
