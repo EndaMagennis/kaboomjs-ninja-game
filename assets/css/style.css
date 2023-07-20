@@ -3,19 +3,27 @@
     box-sizing: border-box;
 }
 
-body{
+body {
+    display: flex;
+    min-height: 100vh;
     width: 100%;
-    display: flex;;
-    height: auto;
+    flex-direction: column;
+    background: blue;
+    text-align: center;
+  }
+
+  main {
+    flex: 1 0 auto;
+    display: flex;
+    width: 100%;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: blue;
-    text-align: center;
-}
+ }
 
 header{
     flex-direction: column;
+    background: aqua;
     width: 100%;
     padding: 10px;
     border-bottom: 2px solid white;
@@ -23,22 +31,24 @@ header{
     align-content: center;
 }
 
-footer{
-    border-top: 1px solid white;
-    width: 100%;
-}
+
 
 #game-canvas {
-    width: 66%;
-    height: 800px;
     border: 3px solid red;
     background: 
-        red
+        white
         url('../backgrounds/background-2.png')
         center center / cover
         no-repeat
         fixed;
 }
+
+footer{
+    border-top: 1px solid white;
+    width: 100%;
+}
+
+
 
 @media screen and (max-width: 500px) {
     header{
