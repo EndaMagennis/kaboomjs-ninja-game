@@ -292,9 +292,6 @@ function attack(){
     if(player.curAnim() !== 'attackAnim'){
         player.use(sprite('playerAttack'));
         player.play('attackAnim');
-        add([
-            shape(new Rect())
-        ])
     }
 }
 
