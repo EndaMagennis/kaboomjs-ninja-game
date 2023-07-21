@@ -3,6 +3,8 @@ let gameCanvas = document.querySelector("#game-canvas");
 const k = kaboom({
     fullscreen: true,
     canvas: gameCanvas,
+    width: 600,
+    height: 400,
     scale: 2,
     debug: true,
     background: [0,0,0,0]
@@ -48,9 +50,14 @@ loadSprite('enemyMove', 'assets/sprites/samurai/samurai-walk.png', {
 });
 
 //creating enemy attack animation
-loadSprite('enemyAttack1', 'assets/sprites/samurai/samurai-attack_1.png', {
+loadSprite('enemyAttack', 'assets/sprites/samurai/samurai-attack_1.png', {
     sliceX: 5, sliceY: 1,
-    anims: {'enemyAttack1Anim':{from: 0, to: 4, loop: false}}
+    anims: {'enemyAttackAnim':{from: 0, to: 4, loop: false}}
+});
+
+loadSprite('enemyDeath', 'assets/sprites/samurai/samurai-dead.png', {
+    sliceX: 6, sliceY: 1,
+    anims: {'enemyDeathAnim':{from: 0, to: 5, loop: false}}
 });
 
 /*loadSpritAtlas() is a kaboom function which takes two parameters, a source (usually to a spritesheet) and data.
@@ -147,7 +154,7 @@ const player = make([
     area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0, 42)}),//sets a rectangle to collide
     scale(1),//sets sprite scale
     anchor('center'),//anchors rectangle to center of sprite
-    body(),// gives player physics
+    body({stickToPlatform: true}),// gives player physics
     pos(100, 1500),// starting position
     {
         speed: 400,//movement speed
@@ -162,17 +169,21 @@ const player = make([
 
 const enemy = make([
     sprite('enemyIdle'),
-    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 42)}),
     scale(1),
+    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}),
     anchor('center'),
-    state("idle",["idle", "attack", "move"]),//states for AI to enter/exit
     body(),
-    pos(130, 1500),
+    pos(200, 1500),
     {
         health: 100,
-        speed: 400,//enemy's base speed
-        agroRange: 10,// a proximity under which the enemy will try to attack the player 
-        damage: 50,// damage this enemy inflicts
+        speed: 400,
+        damage: 50,
+        sprites: {
+            move: "enemyMove",
+            idle: "enemyIdle",
+            attack: "enemyAttack",
+            death: "enemyDeath"
+        }
     },
     "enemy"
 ]);
@@ -428,6 +439,15 @@ function hanldeTouchScreenInputs(){
 
  };
 
+//Ffunction to create random coordinates
+
+function randomCoordinates(number){
+    let xPos = [];
+    let yPos = [];
+    
+}
+/*creating a method to generate an enemy object to enable easier instantiation*/
+
 
 /*Creating a function to handle Enemy AI. Should use the enemy.states() to enter and exit states based on player proximity*/
   function enemyAI(playerPos){
@@ -447,7 +467,6 @@ function restartGame(){
 //The main menu is the first scene the user encounters
 scene('MainMenu', ()=>{
     
-    
     const menu = add([
         text("HELLO"),
     ])
@@ -455,17 +474,12 @@ scene('MainMenu', ()=>{
         go('MainGame');
     })  
     
-    onresize(()=>{
-        const scale = Math.min(window.innerWidth / canvas.width, window.innerHeight / canvas.height);
-        canvas.style.transform = `scale(${scale})`;
-    }) 
-    
 })
 
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene('MainGame', () =>{
-
+     
     
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
@@ -479,9 +493,8 @@ scene('MainGame', () =>{
 
     //adding the player object to the scene
     add(player);
-    player.play('idleAnim');
+    player.use(sprite('playerIdle'));
     
-    //adding enemy object to the scene
     add(enemy);
     enemy.play('enemyIdleAnim');
 
@@ -511,6 +524,13 @@ scene('MainGame', () =>{
 
     //onUpdate is a built-in function which is called each frame
     onUpdate(()=> {
+        onResize(() => {
+            if (window.innerWidth > gameCanvas.width && window.innerHeight > gameCanvas.height) return;
+            const scale = Math.min(window.innerHeight/gameCanvas.height, window.innerWidth/gameCanvas.width);
+    
+            gameCanvas.style.transform = `scale(${scale})`;
+        })
+
         //if not running, jumping, or attacking, return to idle
         if(player.curAnim() !== 'runAnim'&& player.curAnim() !== 'attackAnim' && player.curAnim() !== 'jumpAnim' && player.isGrounded() ){
             idle(); 
@@ -527,20 +547,19 @@ scene('MainGame', () =>{
             player.flipX = false;
         };
 
-        if(player.pos.y > 2000){
+        if(player.pos.y > 2000  || player.health <=0){
             destroy(player);
             restartGame();
         };
 
-        if(enemy.health <= 0){
-            destroy(enemy);
-        };
+        if(enemy.pos.y > 2000 || enemy.health <= 0){
+            enemy.use(sprite('enemyDeath'));
+            enemy.play('enemyDeathAnim');
+            wait(3, ()=> {
+                destroy(enemy);
+            })
+        }
 
-        onResize(()=>{
-            const scale = Math.min(window.innerWidth / gameCanvas.width, window.innerHeight / gameCanvas.height);
-            gameCanvas.style.transform = `scale(${scale})`;
-            camScale(scale * scale/1);
-        });
     }),
 
     //check if the player is touching the ground and set
@@ -551,9 +570,8 @@ scene('MainGame', () =>{
 
     //checking if enemy is hit by player attack
     onCollide("enemy", "hit", () => {
+        debug.log("hit");
         enemy.health -= player.damage;
-        console.log("hit");
-        debug.log("hit")
     })
 )})
 
