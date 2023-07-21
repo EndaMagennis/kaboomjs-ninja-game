@@ -9,106 +9,128 @@ const k = kaboom({
     background: [0,0,0,0]
 });
 
-// loading assets for game
-//loading player sprite animations.
+/*loadSprite() can be take two or three parameters. With two parameters; a string ID, and a filepath, a static sprite is created.
+The third parameter can slice a spritesheet horizontally and vertically and create an animation.*/
+
+//creating player idle animation
 let playerIdleAnim = loadSprite('playerIdle', 'assets/sprites/kunoichi/kunoichi-idle.png', {
     sliceX: 9, sliceY: 1,
     anims: {'idleAnim': {from: 0, to: 8, loop: true}}
 });
 
+//creating player run animation
 let playerRunAnim = loadSprite('playerRun', 'assets/sprites/kunoichi/kunoichi-run.png', {
     sliceX: 8, sliceY: 1,
     anims: {'runAnim': {from: 0, to: 7, loop: true}}
 });
 
+//creating player jump animation
 let playerJumpAnim = loadSprite('playerJump', 'assets/sprites/kunoichi/kunoichi-jump.png', {
     sliceX: 10, sliceY: 1,
-    anims: {'jumpAnim': {from: 1, to: 9, loop: false}}
+    anims: {'jumpAnim': {from: 0, to: 9, loop: false}}
 });
 
+//creating player attack animation
 let playerAttack = loadSprite('playerAttack', 'assets/sprites/kunoichi/kunoichi-attack-2.png', {
     sliceX: 8, sliceY: 1,
-    anims: {'attackAnim': {from: 1, to: 7, loop: false}}
+    anims: {'attackAnim': {from: 0, to: 7, loop: false}}
 });
 
-//loading enemy sprite animations
+//creating enemy idle animation
 let enemyIdleAnim = loadSprite('enemyIdle', 'assets/sprites/samurai/samurai-idle.png', {
     sliceX: 6, sliceY: 1,
-    anims: {'enemyIdleAnim': {from: 1, to: 5, loop: true}}
+    anims: {'enemyIdleAnim': {from: 0, to: 5, loop: true}}
 });
 
+//creating enemy walkanimation
 let enemyMoveAnim = loadSprite('enemyMove', 'assets/sprites/samurai/samurai-walk.png', {
     sliceX: 9, sliceY: 1,
-    anims: {'enemyWalkAnim': {from: 1, to: 8, loop: true}}
-})
+    anims: {'enemyWalkAnim': {from: 0, to: 8, loop: true}}
+});
 
+//creating enemy attack animation
 let enemyAttack1 = loadSprite('enemyAttack1', 'assets/sprites/samurai/samurai-attack_1.png', {
     sliceX: 5, sliceY: 1,
-    anims: {'enemyAttack1Anim':{from: 1, to: 4, loop: false}}
-})
+    anims: {'enemyAttack1Anim':{from: 0, to: 4, loop: false}}
+});
 
-//taking coordinates from the tilesheet and creating individual tiles
+/*loadSpritAtlas() is a kaboom function which takes two parameters, a source (usually to a spritesheet) and data.
+You create a dataset of objects by inputing their x,y coordinates and the pixel width and height from the source.
+Each object can then be rendered individually as a static as a sprite.
+Additionally, each object can be sliced and given an anims attribute to generate animations. No such sprites
+were generates this way for this project.*/
 loadSpriteAtlas('assets/tiles/tileset-1.png', {
+    //creating a static ground tile sprite
     'grassFloor': {
         x: 32,
         y: 0,
         width: 32,
         height: 16
     },
+    //creating and alternate ground tile
     'grassRaised': {
         x: 16,
         y: 0,
         width: 72,
         height: 64,
     },
+    //creating a filler sprite
     'dirt': {
         x: 32,
         y: 32,
         width: 32,
         height: 32
     },
+    //creating an alternate verion which can be walked on
     'walkableDirt': {
         x: 32,
         y: 32,
         width: 32,
         height: 32
     },
+    //creating a sprite for cave entrances
     'caveEntrance': {
         x: 16,
         y: 84,
         width: 16,
         height: 64
     },
+    //creating a sprite for the background of caves
     'caveBack' : {
         x: 40,
         y: 96,
         width: 32,
         height: 32
     },
+    //creating a roof for caves
     'caveTop' : {
         x: 32,
         y: 80,
         width: 64,
         height: 16,
     },
+    //creating a sprite for cave exits
     'caveExit' :{
         x: 72,
         y: 96,
         width: 16,
         height: 64
     },
+    //creating a tree sprite
     'tree1' :{
         x: 260,
         y: 0,
         width: 64,
         height: 32
     },
+    //creating a bush sprite
     'bush': {
         x: 224,
         y: 32,
         width: 62,
         height: 16
     },
+    //creating a mushroom sprite
     'mushrooms': {
         x: 270,
         y: 32,
@@ -117,8 +139,8 @@ loadSpriteAtlas('assets/tiles/tileset-1.png', {
     }
 })
 
-//loading background image
-
+/*make() is a kaboom method which can take a single argument or an array and create a game object. 
+It is similar to add(), but does not add the game object to the scene*/
 //creating a player game object
 const player = make([
     sprite(playerIdleAnim),//default animation
@@ -131,9 +153,10 @@ const player = make([
         speed: 400,//movement speed
         isAttacking: false,
         health: 100,
-        
+
     },
-    "player",//tag which can be referenced for collision detection
+    //a string attribute acts as a tag which can be used in collision detection and other logic
+    "player",
 ]);
 
 //creating an enemy game object
@@ -153,8 +176,67 @@ const enemy = make([
     "enemy"
 ]);
 
+/*Creating a map constant; an array of strings, to pass as the first parameter to the addLevel() method*/
+const map = [
+    "                                                                             ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # #d# # # # # # # # #",
+    "                                            ______________________           ",
+    "  # # # # # # # # # # # # # # # # # # # # #- - - - - - - - - - - - -# # # # #",
+    "                                            £££££££££££££££££££££££          ",
+    "  # # # # # # # # # # # # # # # # # # #*#*#|£££££££££££££££££££££££ # # # # #",
+    "                           _______________ #£££££££££££*£*£££££££££/#        ",
+    "  # # # # # # # # # # # # # # # # # # # # #__________________________ # # # #",
+    "                                           # # # # # # # # # # # # # #       ",
+    "  # # #^#^# #*# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "    _____________                                                            ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # # # # # # # # # # # # #*#^# # # # # # # # # # # # # # # # # # # # # # # #",
+    "                        ________                                             ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # #^#&#*# # # # # # # # # # # #",
+    "                                          _______________                    ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # # # # #&#&#^# # #^#^# # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "        _______________________                                              ",
+    "  # # # #- - - - - - - - - - -# # # # # # # # # # # # # # # # # # # # # # # #",
+    "         ££££££££££££££££££££                                                ",
+    "  #h# ##|££££££££££££££££££££ # # # # #*#*# # # # # # # # # # # # # # # # # #",
+    " _______#£*£*£*£££££££££££££*/#    _____________                             ",
+    "  # # # _____________________# # # # # # # # # # # # # # # # # # # # # # # ##",
+    "        # # # # # # # # # # #                                                ",
+    "  # # # # # # # # # # # # # # # # #^# # # # # # # # # # # # #&#*# # # # # # #",
+    "                                _____                    __________          ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                          _______                            ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # # # # # # # # # # # #^#^#&#&# # # # # # # # # # # # # # # # # # # # # # #",
+    "                       _____________                                         ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                                             ",
+    "  # #*#*#&# # # # # # # # # # # # # # # # # #h# # # # # # # # # # # # # # # #",
+    "  ___________                              __                                ",
+    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #^# # # # # #",
+    "                                                               _# # #^#*# # #",
+    "  # # # # # #^#&#&# #^# # # # # # # # # # # # # # # # #________   ________   ",
+    "           _____________________                      # # # # # + # # # # # #",
+    "  # # # # #- - - - - - - - - --   # # # # # # # # # # # # # # # # # # # # # #",
+    "            £££££££££££££££££££££                                            ",
+    "  #*#^# # #|£££££££££££££££££££££ # #^# #^# # # # #&#&# # # # # # # # # # # #",
+    " _________ #£*£££££££££££££*£££££/#___________   ____________                ",
+    "  # # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~# # # # # # # # # # # # # # # # # # # # # #"
+]
 
-//setting the level configurations
+/*Creating a level configuation object, to pass as a second parameter to the addLevel() method to render sprites as a level*/
 const levelConfig = {
     tileWidth:32,//pixel width of each tile
     tileHeight:32,//pixel height of each tile
@@ -225,68 +307,8 @@ const levelConfig = {
     }
 };
 
-//the map is an array of strings, which holds the tile objects and renders
-//their sprites
-const map = [
-    "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # #d# # # # # # # # #",
-    "                                            ______________________           ",
-    "  # # # # # # # # # # # # # # # # # # # # #- - - - - - - - - - - - -# # # # #",
-    "                                            £££££££££££££££££££££££          ",
-    "  # # # # # # # # # # # # # # # # # # #*#*#|£££££££££££££££££££££££ # # # # #",
-    "                           _______________ #£££££££££££*£*£££££££££/#        ",
-    "  # # # # # # # # # # # # # # # # # # # # #__________________________ # # # #",
-    "                                           # # # # # # # # # # # # # #       ",
-    "  # # #^#^# #*# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "    _____________                                                            ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # # # # # # # # # # # # #*#^# # # # # # # # # # # # # # # # # # # # # # # #",
-    "                        ________                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # #^#&#*# # # # # # # # # # # #",
-    "                                          _______________                    ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # # # # #&#&#^# # #^#^# # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "        _______________________                                              ",
-    "  # # # #- - - - - - - - - - -# # # # # # # # # # # # # # # # # # # # # # # #",
-    "         ££££££££££££££££££££                                                ",
-    "  #h# ##|££££££££££££££££££££ # # # # #*#*# # # # # # # # # # # # # # # # # #",
-    " _______#£*£*£*£££££££££££££*/#    _____________                             ",
-    "  # # # _____________________# # # # # # # # # # # # # # # # # # # # # # # ##",
-    "        # # # # # # # # # # #                                                ",
-    "  # # # # # # # # # # # # # # # # #^# # # # # # # # # # # # #&#*# # # # # # #",
-    "                                _____                    __________          ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                          _______                            ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # # # # # # # # # # # #^#^#&#&# # # # # # # # # # # # # # # # # # # # # # #",
-    "                       _____________                                         ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "                                                                             ",
-    "  # #*#*#&# # # # # # # # # # # # # # # # # #h# # # # # # # # # # # # # # # #",
-    "  ___________                              __                                ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #^# # # # # #",
-    "                                                               _# # #^#*# # #",
-    "  # # # # # #^#&#&# #^# # # # # # # # # # # # # # # # #________   ________   ",
-    "           _____________________                      # # # # # + # # # # # #",
-    "  # # # # #- - - - - - - - - --   # # # # # # # # # # # # # # # # # # # # # #",
-    "            £££££££££££££££££££££                                            ",
-    "  #*#^# # #|£££££££££££££££££££££ # #^# #^# # # # #&#&# # # # # # # # # # # #",
-    " _________ #£*£££££££££££££*£££££/#___________   ____________                ",
-    "  # # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~# # # # # # # # # # # # # # # # # # # # # #"
-]
-
-//creating funtions to handle player movement
+/*Creating functons to handle player actions. These functions will be called when the player inputs button commands.
+This should reduce repetition as both desktop and tablet inputs should call the same functions.*/
 function idle(){
     player.isAttacking = false;
     player.use(sprite('playerIdle'));
@@ -331,7 +353,8 @@ function attack(){
     }
 }
 
-//creating a function to handle inputs
+/*Creating a method which will be called during the onUpdate() method in order to register desktop button inputs.
+ Inputs will correspond to player actions and will be updated each frame.*/
 function handleInputs(){
     //onKeyDown is a built in method which registers continuous press
     onKeyDown('d',() =>{
@@ -364,24 +387,19 @@ function handleInputs(){
         go('PauseMenu');
     })
 };
- 
-function main(){
-    addLevel(map, levelConfig);
-    camScale(0.8);
-    setGravity(1000); 
-    add(player);
-    add(enemy);
 
-    player.play('idleAnim');
-    enemy.play('enemyIdleAnim');
-    //calling the handle inputs funtion
-    handleInputs();
-    //allowing camera to follow player
-    player.onUpdate(()=>{
-    camPos(player.pos);
-    }
-)}
+/*Creating a method which will be called during the onUpdate() method in order to register touch screen inputs.
+ Inputs will correspond to player actions and will be updated each frame.*/
+ function hanldeTouchScreenInputs(){
 
+ };
+
+
+/*A scene is a kaboom function which takes two params; a string ID, and a function.
+The scene represents a level, where the function handles all game logic intended for that particular scene.
+This allows for scene flow management to transition between levels and menus and vice versa.*/
+
+//The main menu is the first scene the user encounters
 scene('MainMenu', ()=>{
     const menu = add([
         text("HELLO"),
@@ -391,10 +409,17 @@ scene('MainMenu', ()=>{
     })
 })
 
+//The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene('MainGame', () =>{
+
+    /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
+    The characters within the strings are converted to tiles based on the configurations outlined in the object*/
     addLevel(map, levelConfig);
+    /*camScale sets a virtual z axis distance from the player, simulating a camera distance */
     camScale(0.8);
+    /*setGravity sets a virtual gravity which acts on objcets with a .body() attribute*/
     setGravity(1000); 
+    //adding the player object to the scene
     add(player);
     add(enemy);
 
@@ -429,9 +454,11 @@ scene('PauseMenu', () =>{
     const menu = add([
         text("Paused"),
     ])
-    onKeyPress('space', ()=>{
+    onKeyPress('p', ()=>{
         go('MainGame');
     })
 })
-//adding level to the scene
+
+/*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
+Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
 go('MainGame');
