@@ -3,8 +3,6 @@ let gameCanvas = document.querySelector("#game-canvas");
 const k = kaboom({
     fullscreen: true,
     canvas: gameCanvas,
-    width: 600,
-    height: 400,
     scale: 2,
     debug: true,
     background: [0,0,0,0]
@@ -171,6 +169,7 @@ const enemy = make([
     body(),
     pos(130, 1500),
     {
+        health: 100,
         speed: 400,//enemy's base speed
         agroRange: 10,// a proximity under which the enemy will try to attack the player 
         damage: 50,// damage this enemy inflicts
@@ -372,7 +371,7 @@ function attack(){
             rect(30,30),
             area(),
             pos(currentFlip ? slashXFlipped: slashX, slashY),
-            opacity(1),
+            opacity(0),
             "hit"
             ])
         });
@@ -448,31 +447,47 @@ function restartGame(){
 //The main menu is the first scene the user encounters
 scene('MainMenu', ()=>{
     
+    
     const menu = add([
         text("HELLO"),
     ])
     onKeyPress('space', ()=>{
         go('MainGame');
-    })
+    })  
+    
+    onresize(()=>{
+        const scale = Math.min(window.innerWidth / canvas.width, window.innerHeight / canvas.height);
+        canvas.style.transform = `scale(${scale})`;
+    }) 
+    
 })
+
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene('MainGame', () =>{
+
+    
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
     addLevel(map, levelConfig);
+
     /*camScale sets a virtual z axis distance from the player, simulating a camera distance */
     camScale(0.8);
+
     /*setGravity sets a virtual gravity which acts on objcets with a .body() attribute*/
     setGravity(1000); 
+
     //adding the player object to the scene
     add(player);
     player.play('idleAnim');
-
+    
+    //adding enemy object to the scene
     add(enemy);
-    enemy.play('enemyIdleAnim')
+    enemy.play('enemyIdleAnim');
+
     //calling the handle inputs funtion
     handleInputs();
+
     //adding invisible walls
     add([
         rect(16, 1760),
@@ -488,10 +503,12 @@ scene('MainGame', () =>{
         opacity(0),
         pos(2448, 0)
     ])
+
     //allowing camera to follow player
     player.onUpdate(()=>{
     camPos(player.pos);
     },
+
     //onUpdate is a built-in function which is called each frame
     onUpdate(()=> {
         //if not running, jumping, or attacking, return to idle
@@ -514,6 +531,16 @@ scene('MainGame', () =>{
             destroy(player);
             restartGame();
         };
+
+        if(enemy.health <= 0){
+            destroy(enemy);
+        };
+
+        onResize(()=>{
+            const scale = Math.min(window.innerWidth / gameCanvas.width, window.innerHeight / gameCanvas.height);
+            gameCanvas.style.transform = `scale(${scale})`;
+            camScale(scale * scale/1);
+        });
     }),
 
     //check if the player is touching the ground and set
@@ -522,13 +549,11 @@ scene('MainGame', () =>{
         !player.isCurrentlyJumping;
     }),
 
+    //checking if enemy is hit by player attack
     onCollide("enemy", "hit", () => {
-        enemy.health - player.damage;
+        enemy.health -= player.damage;
         console.log("hit");
         debug.log("hit")
-        if(enemy.health <= 0){
-            destroy(enemy);
-        };
     })
 )})
 
