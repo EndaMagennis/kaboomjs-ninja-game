@@ -6,6 +6,7 @@ const k = kaboom({
     width: 600,
     height: 400,
     scale: 2,
+    debug: true,
     background: [0,0,0,0]
 });
 
@@ -13,43 +14,43 @@ const k = kaboom({
 The third parameter can slice a spritesheet horizontally and vertically and create an animation.*/
 
 //creating player idle animation
-let playerIdleAnim = loadSprite('playerIdle', 'assets/sprites/kunoichi/kunoichi-idle.png', {
+loadSprite('playerIdle', 'assets/sprites/kunoichi/kunoichi-idle.png', {
     sliceX: 9, sliceY: 1,
     anims: {'idleAnim': {from: 0, to: 8, loop: true}}
 });
 
 //creating player run animation
-let playerRunAnim = loadSprite('playerRun', 'assets/sprites/kunoichi/kunoichi-run.png', {
+loadSprite('playerRun', 'assets/sprites/kunoichi/kunoichi-run.png', {
     sliceX: 8, sliceY: 1,
     anims: {'runAnim': {from: 0, to: 7, loop: true}}
 });
 
 //creating player jump animation
-let playerJumpAnim = loadSprite('playerJump', 'assets/sprites/kunoichi/kunoichi-jump.png', {
+loadSprite('playerJump', 'assets/sprites/kunoichi/kunoichi-jump.png', {
     sliceX: 10, sliceY: 1,
     anims: {'jumpAnim': {from: 0, to: 9, loop: false}}
 });
 
 //creating player attack animation
-let playerAttack = loadSprite('playerAttack', 'assets/sprites/kunoichi/kunoichi-attack-2.png', {
+loadSprite('playerAttack', 'assets/sprites/kunoichi/kunoichi-attack-2.png', {
     sliceX: 8, sliceY: 1,
     anims: {'attackAnim': {from: 0, to: 7, loop: false}}
 });
 
 //creating enemy idle animation
-let enemyIdleAnim = loadSprite('enemyIdle', 'assets/sprites/samurai/samurai-idle.png', {
+loadSprite('enemyIdle', 'assets/sprites/samurai/samurai-idle.png', {
     sliceX: 6, sliceY: 1,
     anims: {'enemyIdleAnim': {from: 0, to: 5, loop: true}}
 });
 
 //creating enemy walkanimation
-let enemyMoveAnim = loadSprite('enemyMove', 'assets/sprites/samurai/samurai-walk.png', {
+loadSprite('enemyMove', 'assets/sprites/samurai/samurai-walk.png', {
     sliceX: 9, sliceY: 1,
     anims: {'enemyWalkAnim': {from: 0, to: 8, loop: true}}
 });
 
 //creating enemy attack animation
-let enemyAttack1 = loadSprite('enemyAttack1', 'assets/sprites/samurai/samurai-attack_1.png', {
+loadSprite('enemyAttack1', 'assets/sprites/samurai/samurai-attack_1.png', {
     sliceX: 5, sliceY: 1,
     anims: {'enemyAttack1Anim':{from: 0, to: 4, loop: false}}
 });
@@ -91,9 +92,9 @@ loadSpriteAtlas('assets/tiles/tileset-1.png', {
     //creating a sprite for cave entrances
     'caveEntrance': {
         x: 16,
-        y: 84,
-        width: 16,
-        height: 64
+        y: 80,
+        width: 32,
+        height: 80
     },
     //creating a sprite for the background of caves
     'caveBack' : {
@@ -106,15 +107,15 @@ loadSpriteAtlas('assets/tiles/tileset-1.png', {
     'caveTop' : {
         x: 32,
         y: 80,
-        width: 64,
-        height: 16,
+        width: 48,
+        height: 24,
     },
     //creating a sprite for cave exits
     'caveExit' :{
-        x: 72,
-        y: 96,
-        width: 16,
-        height: 64
+        x: 64,
+        y: 80,
+        width: 32,
+        height: 80
     },
     //creating a tree sprite
     'tree1' :{
@@ -127,7 +128,7 @@ loadSpriteAtlas('assets/tiles/tileset-1.png', {
     'bush': {
         x: 224,
         y: 32,
-        width: 62,
+        width: 32,
         height: 16
     },
     //creating a mushroom sprite
@@ -141,37 +142,38 @@ loadSpriteAtlas('assets/tiles/tileset-1.png', {
 
 /*make() is a kaboom method which can take a single argument or an array and create a game object. 
 It is similar to add(), but does not add the game object to the scene*/
+
 //creating a player game object
 const player = make([
-    sprite(playerIdleAnim),//default animation
+    sprite('playerIdle'),//default animation
     area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0, 42)}),//sets a rectangle to collide
     scale(1),//sets sprite scale
     anchor('center'),//anchors rectangle to center of sprite
     body(),// gives player physics
-    pos(100, 600),// starting position
+    pos(100, 1500),// starting position
     {
         speed: 400,//movement speed
-        isAttacking: false,
-        health: 100,
+        health: 100,//player's base health
+        damage: 25,
+        isCurrentlyJumping: false,
 
     },
     //a string attribute acts as a tag which can be used in collision detection and other logic
     "player",
 ]);
 
-//creating an enemy game object
 const enemy = make([
     sprite('enemyIdle'),
-    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0, 42)}),
+    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 42)}),
     scale(1),
     anchor('center'),
-    body(),
-    pos(400 , 600),
     state("idle",["idle", "attack", "move"]),//states for AI to enter/exit
+    body(),
+    pos(130, 1500),
     {
-        speed: 400,
-        isAttacking: false,
-        damage: 50,
+        speed: 400,//enemy's base speed
+        agroRange: 10,// a proximity under which the enemy will try to attack the player 
+        damage: 50,// damage this enemy inflicts
     },
     "enemy"
 ]);
@@ -179,61 +181,61 @@ const enemy = make([
 /*Creating a map constant; an array of strings, to pass as the first parameter to the addLevel() method*/
 const map = [
     "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
     "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
     "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # #d# # # # # # # # #",
-    "                                            ______________________           ",
-    "  # # # # # # # # # # # # # # # # # # # # #- - - - - - - - - - - - -# # # # #",
-    "                                            £££££££££££££££££££££££          ",
-    "  # # # # # # # # # # # # # # # # # # #*#*#|£££££££££££££££££££££££ # # # # #",
-    "                           _______________ #£££££££££££*£*£££££££££/#        ",
-    "  # # # # # # # # # # # # # # # # # # # # #__________________________ # # # #",
-    "                                           # # # # # # # # # # # # # #       ",
-    "  # # #^#^# #*# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "    _____________                                                            ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
     "                                                                             ",
-    "  # # # # # # # # # # # # #*#^# # # # # # # # # # # # # # # # # # # # # # # #",
-    "                        ________                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
     "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # #^#&#*# # # # # # # # # # # #",
-    "                                          _______________                    ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                                           d                 ",
+    "                                           #_______________________          ",
+    "                                                                  #          ",
+    "                                            ££££££££££££££££££££££           ",
+    "                                       * * |££££££££££££££££££££££/          ",
+    "                            _______________ £££££££££££*£*££££££££           ",
+    "                            # # # # # # # # __________________________       ",
+    "                                            # # # # # # # # # # # # #        ",
+    "        ^ ^  *                                                               ",
+    "     _____________                                                           ",
+    "     # # # # # # #                                                           ",
     "                                                                             ",
-    "  # # # # #&#&#^# # #^#^# # # # # # # # # # # # # # # # # # # # # # # # # # #",
-    "        _______________________                                              ",
-    "  # # # #- - - - - - - - - - -# # # # # # # # # # # # # # # # # # # # # # # #",
-    "         ££££££££££££££££££££                                                ",
-    "  #h# ##|££££££££££££££££££££ # # # # #*#*# # # # # # # # # # # # # # # # # #",
-    " _______#£*£*£*£££££££££££££*/#    _____________                             ",
-    "  # # # _____________________# # # # # # # # # # # # # # # # # # # # # # # ##",
-    "        # # # # # # # # # # #                                                ",
-    "  # # # # # # # # # # # # # # # # #^# # # # # # # # # # # # #&#*# # # # # # #",
-    "                                _____                    __________          ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                          * ^                                                ",
+    "                         _________                                           ",
+    "                         # # # # #                                           ",
     "                                                                             ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                            ^ &  *                           ",
+    "                                         _________________                   ",
+    "                                         # # # # # # # # #                   ",
+    "                                                                             ",
+    "          & & ^     ^ ^                                                      ",
+    "       #_____________________                                                ",
+    "                            #                                                ",
+    "        ££££££££££££££££££££                                                 ",
+    "   h   |££££££££££££££££££££/           * *                                  ",
+    " _______£*£*£*££££££££££££*£_      _____________                             ",
+    " # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~      # # # # # # #                             ",
+    "        ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~                                                ",
+    "                                   ^                       & *               ",
+    "                                _____                    _________           ",
+    "                                # # #                    # # # # #           ",
+    "                                                                             ",
+    "                                              *                              ",
     "                                          _______                            ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                                          # # # #                            ",
     "                                                                             ",
-    "  # # # # # # # # # # # #^#^#&#&# # # # # # # # # # # # # # # # # # # # # # #",
+    "                         ^ ^ & &                                             ",
     "                       _____________                                         ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #",
+    "                       # # # # # # #                                         ",
     "                                                                             ",
-    "  # #*#*#&# # # # # # # # # # # # # # # # # #h# # # # # # # # # # # # # # # #",
-    "  ___________                              __                                ",
-    "  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #^# # # # # #",
-    "                                                               _# # #^#*# # #",
-    "  # # # # # #^#&#&# #^# # # # # # # # # # # # # # # # #________   ________   ",
-    "           _____________________                      # # # # # + # # # # # #",
-    "  # # # # #- - - - - - - - - --   # # # # # # # # # # # # # # # # # # # # # #",
-    "            £££££££££££££££££££££                                            ",
-    "  #*#^# # #|£££££££££££££££££££££ # #^# #^# # # # #&#&# # # # # # # # # # # #",
-    " _________ #£*£££££££££££££*£££££/#___________   ____________                ",
-    "  # # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~# # # # # # # # # # # # # # # # # # # # # #"
+    "     * * &                                   h                               ",
+    "  ___________                              ___                               ",
+    "  # # # # # #                              # #         ___                   ",
+    "                                                       ###                   ",
+    "             ^ & &   ^                                                *      ",
+    "          #______________________                                 _______    ",
+    "                                #                                 # # # #    ",
+    "           £££££££££££££££££££££                                             ",
+    "   * ^    |£££££££££££££££££££££/    ^   ^         & &           ^ ^         ",
+    " _________ £££*££££*£££££££*££*£___________       ___________________________",
+    " # # # # #~~~~~~~~~~~~~~~~~~~~~~# # # # # #       # # # # # # # # # # # # # #"
 ]
 
 /*Creating a level configuation object, to pass as a second parameter to the addLevel() method to render sprites as a level*/
@@ -247,6 +249,7 @@ const levelConfig = {
             sprite('grassFloor'),
             area(),
             body({isStatic: true}),//gives physics but holds in place
+            anchor('top'),
             scale(2),
             "ground",//tag which can be referenced for collision detection
         ],
@@ -254,7 +257,7 @@ const levelConfig = {
             sprite('grassRaised'),
             scale(2),
             area({shape: new Rect(vec2(0), 72, 32), offset: vec2(0, 0)}),
-            anchor('center'),
+            anchor('top'),
             body({isStatic: true}),
             "ground"
         ],
@@ -267,6 +270,7 @@ const levelConfig = {
             sprite('walkableDirt'),
             area(),
             body({isStatic: true}),//gives physics but holds in place
+            anchor('top'),
             scale(2),
             "ground"
         ],
@@ -274,21 +278,24 @@ const levelConfig = {
             sprite('caveEntrance'),
             anchor('center'),
             scale(2),
+            "cave"
         ],
         "/": () =>[
             sprite('caveExit'),
             anchor('center'),
-            scale(2)
-        ],
-        "-": () => [
-            sprite('caveTop'),
             scale(2),
         ],
         "£": () => [
             sprite('caveBack'),
-            anchor('top'),
+            anchor('center'),
             scale(2),
         ],
+        "-": () => [
+            sprite('caveTop'),
+            anchor('center'),
+            scale(2),
+        ],
+        
         "^": () => [
             sprite('tree1'),
             anchor('center'),
@@ -303,12 +310,12 @@ const levelConfig = {
             sprite('mushrooms'),
             anchor('top'),
             scale(2)
-        ]
+        ],
     }
 };
 
 /*Creating functons to handle player actions. These functions will be called when the player inputs button commands.
-This should reduce repetition as both desktop and tablet inputs should call the same functions.*/
+This should reduce repetition as both desktop and touch screen inputs should call the same functions.*/
 function idle(){
     player.isAttacking = false;
     player.use(sprite('playerIdle'));
@@ -340,20 +347,40 @@ function playerJump(){
         player.use(sprite('playerJump'));
         player.play('jumpAnim');
         player.jump(600);
+        player.isCurrentlyJumping = true;
+        !player.isGrounded;
     }
 };
 
 function attack(){
-    player.isAttacking = true;
-    console.log(player.isAttacking);
-
+    //creating a variable to determine player facing
+    const currentFlip = player.flipX;
+    //checking if player is attacking
     if(player.curAnim() !== 'attackAnim'){
+        //if not use the sprite and associated animation to attack
         player.use(sprite('playerAttack'));
         player.play('attackAnim');
+        //checking the player facing
+        player.flipX = currentFlip;
+        //where to create a hitbox relative to player
+        const slashX = player.pos.x + 65;
+        const slashXFlipped = player.pos.x - 80;
+        const slashY = player.pos.y;
+        //waiting 0.3 seconds before creating a hitbox(rough estimate)
+        wait(0.3, ()=>{
+            add([
+            rect(30,30),
+            area(),
+            pos(currentFlip ? slashXFlipped: slashX, slashY),
+            opacity(1),
+            "hit"
+            ])
+        });
     }
-}
+};
 
-/*Creating a method which will be called during the onUpdate() method in order to register desktop button inputs.
+
+/*Creating a method which will be called during the main gamea in order to register desktop button inputs.
  Inputs will correspond to player actions and will be updated each frame.*/
 function handleInputs(){
     //onKeyDown is a built in method which registers continuous press
@@ -368,7 +395,9 @@ function handleInputs(){
     
     //onKeyRelease is a built in method which registers when a button is released
     onKeyRelease('d', () => {
-        idle();
+        if(player.isGrounded()){
+            idle();
+        }
     })
 
     onKeyDown('a',() =>{
@@ -376,8 +405,10 @@ function handleInputs(){
     })
 
     onKeyRelease('a', () => {
-        idle();
-    })
+        if(player.isGrounded()){
+            idle();
+        }
+   })
 
     onKeyPress('space', () => {
         playerJump();
@@ -386,21 +417,37 @@ function handleInputs(){
     onKeyPress('p', () => {
         go('PauseMenu');
     })
+
+    onKeyPress('p', () => {
+        restartGame();
+    })
 };
 
 /*Creating a method which will be called during the onUpdate() method in order to register touch screen inputs.
  Inputs will correspond to player actions and will be updated each frame.*/
- function hanldeTouchScreenInputs(){
+function hanldeTouchScreenInputs(){
 
  };
 
+
+/*Creating a function to handle Enemy AI. Should use the enemy.states() to enter and exit states based on player proximity*/
+  function enemyAI(playerPos){
+             
+ };
 
 /*A scene is a kaboom function which takes two params; a string ID, and a function.
 The scene represents a level, where the function handles all game logic intended for that particular scene.
 This allows for scene flow management to transition between levels and menus and vice versa.*/
 
+
+/*Creating a function to reset the game */
+function restartGame(){
+
+}
+
 //The main menu is the first scene the user encounters
 scene('MainMenu', ()=>{
+    
     const menu = add([
         text("HELLO"),
     ])
@@ -411,7 +458,6 @@ scene('MainMenu', ()=>{
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene('MainGame', () =>{
-
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
     addLevel(map, levelConfig);
@@ -421,20 +467,36 @@ scene('MainGame', () =>{
     setGravity(1000); 
     //adding the player object to the scene
     add(player);
-    add(enemy);
-
     player.play('idleAnim');
-    enemy.play('enemyIdleAnim');
+
+    add(enemy);
+    enemy.play('enemyIdleAnim')
     //calling the handle inputs funtion
     handleInputs();
+    //adding invisible walls
+    add([
+        rect(16, 1760),
+        area(),
+        body({isStatic: true}),
+        opacity(0),
+        pos(0, 0)
+    ])
+    add([
+        rect(16, 1760),
+        area(),
+        body({isStatic: true}),
+        opacity(0),
+        pos(2448, 0)
+    ])
     //allowing camera to follow player
     player.onUpdate(()=>{
     camPos(player.pos);
     },
     //onUpdate is a built-in function which is called each frame
-    onUpdate(()=>{
-        if(player.curAnim() !== 'runAnim' && player.curAnim() !== 'jumpAnim' && player.isGrounded() && player.curAnim() !== 'attackAnim'){
-            idle();
+    onUpdate(()=> {
+        //if not running, jumping, or attacking, return to idle
+        if(player.curAnim() !== 'runAnim'&& player.curAnim() !== 'attackAnim' && player.curAnim() !== 'jumpAnim' && player.isGrounded() ){
+            idle(); 
         };
 
         if(player.curAnim() !== 'jumpAnim' && !player.isGrounded() && player.heightDelta > 0) {
@@ -446,6 +508,26 @@ scene('MainGame', () =>{
             player.flipX = true;
         } else{
             player.flipX = false;
+        };
+
+        if(player.pos.y > 2000){
+            destroy(player);
+            restartGame();
+        };
+    }),
+
+    //check if the player is touching the ground and set
+    onCollide("player", "ground", () => {
+        player.isGrounded;
+        !player.isCurrentlyJumping;
+    }),
+
+    onCollide("enemy", "hit", () => {
+        enemy.health - player.damage;
+        console.log("hit");
+        debug.log("hit")
+        if(enemy.health <= 0){
+            destroy(enemy);
         };
     })
 )})
