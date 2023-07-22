@@ -1,3 +1,4 @@
+
 let gameCanvas = document.querySelector("#game-canvas");
 //initialising kaboom environment
 const k = kaboom({
@@ -170,39 +171,37 @@ const player = make([
 /*Creating an enemy class to instantiate separate instamces of the same enemy.
 This also allows for methods relavant only to the Enemy to be kept within the class.
 This may be a preferable idea for the Player also.*/
-class Enemy{
-    constructor(currentSprite, scaleFactor, enemyArea, anchorPoint, position, tag){
-        this.currentSprite = currentSprite;
-        this.scaleFactor =scaleFactor;
-        this.enemyArea = enemyArea; 
-        this.anchorPoint = anchorPoint;
-        this.position = position;
-        this.tag = tag;
-    }
 
-    createEnemy(){
-        return add([
-            sprite(this.currentSprite),
-            scale(this.scaleFactor),
-            area(this.enemyArea),
-            anchor(this.anchorPoint),
-            body(this.enemyBody),
-            pos(this.position),
-            {
-                health: 100,
-                speed: 400,
-                damage: 50,
-                sprites: {
-                    move: "enemyMove",
-                    idle: "enemyIdle",
-                    attack: "enemyAttack",
-                    death: "enemyDeath"
-                }
+function createEnemy(currentSprite, scaleFactor, enemyArea, anchorPoint, positionX, positionY, tag) {
+    return add([
+        sprite(currentSprite),
+        scale(scaleFactor),
+        area(enemyArea),
+        anchor(anchorPoint),
+        body(),
+        pos(positionX, positionY),
+        state("move", ["idle", "move", "attack"]),
+        {
+            health: 100,
+            speed: 400,
+            damage: 50,
+            sprites: {
+                move: "enemyMove",
+                idle: "enemyIdle",
+                attack: "enemyAttack",
+                death: "enemyDeath"
             },
-            "enemy"
-        ])
-    }
+            anims: {
+                move: "enemyWalkAnim",
+                idle: "enemyIdleAnim",
+                attack: "enemyAttackAnim",
+                death: "enemyDeathAnim"
+            }
+        },
+        "enemy"
+    ])
 }
+
 
 /*Creating a map constant; an array of strings, to pass as the first parameter to the addLevel() method*/
 const map = [
@@ -382,7 +381,7 @@ function attack(){
     //creating a variable to determine player facing
     const currentFlip = player.flipX;
     //checking if player is attacking
-    if(player.curAnim() !== 'attackAnim'){
+    if(player.curAnim() !== 'attackAnim' && player.isGrounded()){
         //if not use the sprite and associated animation to attack
         player.use(sprite('playerAttack'));
         player.play('attackAnim');
@@ -392,19 +391,45 @@ function attack(){
         const slashX = player.pos.x + 65;
         const slashXFlipped = player.pos.x - 80;
         const slashY = player.pos.y;
-        //waiting 0.3 seconds before creating a hitbox(rough estimate)
-        wait(0.3, ()=>{
+        //waiting before creating a hitbox(rough estimate)
+        wait(0.6, ()=>{
             add([
             rect(30,30),
             area(),
             pos(currentFlip ? slashXFlipped: slashX, slashY),
-            opacity(0),
+            opacity(1),
             "hit"
             ])
         });
     }
 };
 
+function enemyAI(agent){
+    console.log(agent.state)
+
+    agent.onStateEnter("attack", () =>{
+        debug.log("attacking");
+        agent.use(sprite("enemyAttack"))
+        agent.play("enemyAttackAnim", ()=> wait(3, ()=>{
+            agent.enterState("idle")
+        }))
+    })
+    agent.onStateUpdate("ilde", () => {
+        debug.log("idling");
+        agent.use(sprite("enemyIdle"))
+        agent.play("enemyIdleAnim");
+        wait(3, () => agent.enterState("move"))
+    })
+    agent.onStateUpdate("move", () => {
+        debug.log("moving");
+        agent.use(sprite("enemyMove"))
+        agent.play("enemyWalkAnim")
+        if(agent.pos.dist(player.pos) < 100){
+            debug.log("I see you")
+            agent.enterState("attack")
+    }
+    })
+}
 
 /*Creating a method which will be called during the main gamea in order to register desktop button inputs.
  Inputs will correspond to player actions and will be updated each frame.*/
@@ -453,24 +478,7 @@ function handleInputs(){
  Inputs will correspond to player actions and will be updated each frame.*/
 function hanldeTouchScreenInputs(){
 
- };
-
-//Ffunction to create random coordinates
-
-function randomCoordinates(number){
-    let xPos = [];
-    let yPos = [];
-    
-}
-/*creating a method to generate an enemy object to enable easier instantiation*/
-
-
-/*Creating a function to handle Enemy AI. Should use the enemy.states() to enter and exit states based on player proximity*/
-  function enemyAI(){
-    const allEnemies = get("enemy");
-    console.log(allEnemies.length); 
- };
-
+};
 /*A scene is a kaboom function which takes two params; a string ID, and a function.
 The scene represents a level, where the function handles all game logic intended for that particular scene.
 This allows for scene flow management to transition between levels and menus and vice versa.*/
@@ -497,6 +505,7 @@ scene('MainMenu', ()=>{
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene('MainGame', () =>{
      
+
     
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
@@ -511,16 +520,18 @@ scene('MainGame', () =>{
     //adding the player object to the scene
     add(player);
     player.use(sprite('playerIdle'));
+    player.play('idleAnim');
     
     //adding enemies to the map
-    const enemy1 = new Enemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', (200, 1600), "enemy");
-    enemy1.createEnemy();
-    const enemy2 = new Enemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', (1200, 600), "enemy");
-    enemy2.createEnemy();
-    const enemy3 = new Enemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', (2000, 300), "enemy");
-    enemy3.createEnemy();
+    const enemy1 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 440, 1500, "enemy");
+    console.log(enemy1.state);
+    enemyAI(enemy1);
 
-    //calling the handle inputs funtion
+    const enemy2 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 1200, 600, "enemy");
+
+    const enemy3 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 2000, 300, "enemy");
+
+     //calling the handle inputs funtion
     handleInputs();
 
     //adding invisible walls
@@ -541,11 +552,14 @@ scene('MainGame', () =>{
 
     //allowing camera to follow player
     player.onUpdate(()=>{
+
     camPos(player.pos);
     },
-
+    
+  
     //onUpdate is a built-in function which is called each frame
     onUpdate(()=> {
+
         onResize(() => {
             if (window.innerWidth > gameCanvas.width && window.innerHeight > gameCanvas.height) return;
             const scale = Math.min(window.innerHeight/gameCanvas.height, window.innerWidth/gameCanvas.width);
@@ -573,15 +587,6 @@ scene('MainGame', () =>{
             destroy(player);
             restartGame();
         };
-
-        if(enemy.pos.y > 2000 || enemy.health <= 0){
-            enemy.use(sprite('enemyDeath'));
-            enemy.play('enemyDeathAnim');
-            wait(3, ()=> {
-                destroy(enemy);
-            })
-        }
-
     }),
 
     //check if the player is touching the ground and set
@@ -591,10 +596,10 @@ scene('MainGame', () =>{
     }),
 
     //checking if enemy is hit by player attack
-    onCollide("enemy", "hit", () => {
-        debug.log("hit");
-        enemy.health -= player.damage;
-    })
+    // onCollide("enemy", "hit", () => {
+    //     debug.log("hit");
+    //     enemy.health -= player.damage;
+    // })
 )})
 
 scene('PauseMenu', () =>{
