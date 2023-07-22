@@ -167,26 +167,42 @@ const player = make([
     "player",
 ]);
 
-const enemy = make([
-    sprite('enemyIdle'),
-    scale(1),
-    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}),
-    anchor('center'),
-    body(),
-    pos(200, 1500),
-    {
-        health: 100,
-        speed: 400,
-        damage: 50,
-        sprites: {
-            move: "enemyMove",
-            idle: "enemyIdle",
-            attack: "enemyAttack",
-            death: "enemyDeath"
-        }
-    },
-    "enemy"
-]);
+/*Creating an enemy class to instantiate separate instamces of the same enemy.
+This also allows for methods relavant only to the Enemy to be kept within the class.
+This may be a preferable idea for the Player also.*/
+class Enemy{
+    constructor(currentSprite, scaleFactor, enemyArea, anchorPoint, position, tag){
+        this.currentSprite = currentSprite;
+        this.scaleFactor =scaleFactor;
+        this.enemyArea = enemyArea; 
+        this.anchorPoint = anchorPoint;
+        this.position = position;
+        this.tag = tag;
+    }
+
+    createEnemy(){
+        return add([
+            sprite(this.currentSprite),
+            scale(this.scaleFactor),
+            area(this.enemyArea),
+            anchor(this.anchorPoint),
+            body(this.enemyBody),
+            pos(this.position),
+            {
+                health: 100,
+                speed: 400,
+                damage: 50,
+                sprites: {
+                    move: "enemyMove",
+                    idle: "enemyIdle",
+                    attack: "enemyAttack",
+                    death: "enemyDeath"
+                }
+            },
+            "enemy"
+        ])
+    }
+}
 
 /*Creating a map constant; an array of strings, to pass as the first parameter to the addLevel() method*/
 const map = [
@@ -450,8 +466,9 @@ function randomCoordinates(number){
 
 
 /*Creating a function to handle Enemy AI. Should use the enemy.states() to enter and exit states based on player proximity*/
-  function enemyAI(playerPos){
-             
+  function enemyAI(){
+    const allEnemies = get("enemy");
+    console.log(allEnemies.length); 
  };
 
 /*A scene is a kaboom function which takes two params; a string ID, and a function.
@@ -495,8 +512,13 @@ scene('MainGame', () =>{
     add(player);
     player.use(sprite('playerIdle'));
     
-    add(enemy);
-    enemy.play('enemyIdleAnim');
+    //adding enemies to the map
+    const enemy1 = new Enemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', (200, 1600), "enemy");
+    enemy1.createEnemy();
+    const enemy2 = new Enemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', (1200, 600), "enemy");
+    enemy2.createEnemy();
+    const enemy3 = new Enemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', (2000, 300), "enemy");
+    enemy3.createEnemy();
 
     //calling the handle inputs funtion
     handleInputs();
