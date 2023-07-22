@@ -180,7 +180,7 @@ function createEnemy(currentSprite, scaleFactor, enemyArea, anchorPoint, positio
         anchor(anchorPoint),
         body(),
         pos(positionX, positionY),
-        state("move", ["idle", "move", "attack"]),
+        state("idle", ["idle", "move", "attack"]),
         {
             health: 100,
             speed: 400,
@@ -405,29 +405,38 @@ function attack(){
 };
 
 function enemyAI(agent){
-    console.log(agent.state)
-
     agent.onStateEnter("attack", () =>{
         debug.log("attacking");
         agent.use(sprite("enemyAttack"))
-        agent.play("enemyAttackAnim", ()=> wait(3, ()=>{
+        agent.play("enemyAttackAnim")
+        wait(0.7, ()=>{
             agent.enterState("idle")
-        }))
+
+        })
     })
-    agent.onStateUpdate("ilde", () => {
+    agent.onStateEnter("ilde", () => {
+    })
+    agent.onStateUpdate("idle", () =>{
         debug.log("idling");
-        agent.use(sprite("enemyIdle"))
+        agent.use(sprite("enemyIdle"));
         agent.play("enemyIdleAnim");
-        wait(3, () => agent.enterState("move"))
+        wait(3, () => {agent.enterState("move")})
+        
     })
     agent.onStateUpdate("move", () => {
         debug.log("moving");
-        agent.use(sprite("enemyMove"))
-        agent.play("enemyWalkAnim")
-        if(agent.pos.dist(player.pos) < 100){
-            debug.log("I see you")
-            agent.enterState("attack")
-    }
+        agent.use(sprite("enemyMove"));
+        agent.play("enemyWalkAnim");
+        if(player.pos.x < agent.pos.x){
+            agent.flipX = true;
+            agent.move(-player.pos.x, -agent.speed);
+        }else{
+            agent.move(player.pos.x, agent.speed)
+        }
+        if(agent.pos.dist(player.pos) < 80){
+            debug.log("I see you");
+            agent.enterState("attack");
+        }
     })
 }
 
@@ -524,9 +533,7 @@ scene('MainGame', () =>{
     
     //adding enemies to the map
     const enemy1 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 440, 1500, "enemy");
-    console.log(enemy1.state);
-    enemyAI(enemy1);
-
+    //enemyAI(enemy1);
     const enemy2 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 1200, 600, "enemy");
 
     const enemy3 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 2000, 300, "enemy");
