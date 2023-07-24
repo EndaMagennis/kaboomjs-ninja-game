@@ -69,7 +69,7 @@ const playerJumpSprite = "playerJump"
 const enemyIdleSprite = "enemyIdle"
 const enemyAttackSprite = "enemyAttack"
 const enemyMoveSprite = "enemyWalk"
-const enemyDeathSprite = "enemyJump"
+const enemyDeathSprite = "enemyDeath"
 
 const playerIdleAnim = "idleAnim"
 const playerAttackAnim = "attackAnim"
@@ -103,27 +103,27 @@ const player = make([
 ]);
 
 /*Creating an function to instantiate separate instances of the same enemy.*/
-function createEnemy(currentSprite, scaleFactor, enemyArea, anchorPoint, positionX, positionY, tag) {
+function createEnemy(width, height, positionX, positionY, tag) {
     return add([
-        sprite(currentSprite),
-        scale(scaleFactor),
-        area(enemyArea),
-        anchor(anchorPoint),
+        sprite(enemyIdleSprite),
+        scale(1),
+        area({shape: new Rect(vec2(0), width, height), offset:(vec2(0, 32))}),
+        anchor('center'),
         body({mass: 200}),
         pos(positionX, positionY),
         /*state() creates a finite state machine. 
         The agent can transition between states to simulate intelligent behaviour.
         "idle" will be the default state*/
-        state("idle", ["idle", "move", "attack"], {
+        state("idle", ["idle", "move", "attack", "death"], {
             //setting predetermined transitions
-            "idle" : ["attack", "move", "idle"],
-            "attack" : ["move", "idle", "attack"],
-            "move": ["idle", "attack", "move"],
+            "idle" : ["attack", "move", "death", "idle"],
+            "attack" : ["move", "idle", "death", "attack"],
+            "move": ["idle", "attack", "death", "move"],
         }),
         {
             health: 100,
             speed: 400,
-            damage: 50,
+            damage: 25,
         },
         tag
     ])
@@ -397,18 +397,18 @@ function attack(){
     //creating a variable to determine player facing
     const currentFlip = player.flipX;
     //checking if player is attacking
-    if(player.curAnim() !== "attackAnim" && player.isGrounded()){
+    if(player.curAnim() !== "attackAnim" ){
         //if not use the sprite and associated animation to attack
         player.use(sprite("playerAttack"));
 
         //where to create a hitbox relative to player
         const slashX = player.pos.x + 65;
         const slashXFlipped = player.pos.x - 80;
-        const slashY = player.pos.y;
+        const slashY = player.pos.y - 20;
         //onEnd registers the end of the animation
         player.play("attackAnim", {onEnd: () => 
             add([
-            rect(30,30),
+            rect(60, 100),
             area(),
             pos(currentFlip ? slashXFlipped: slashX, slashY),
             opacity(1),
@@ -422,10 +422,13 @@ function attack(){
 
 /*Creating a function to handle enemy AI, which will give the enemy agents basic movement and attack functionality/
 By using Kaboom's Finite state machine the agent is able to move between different states, update, and exit*/
-function enemyAI(agent){
+function enemyAI(agent, tag){
 
     let flipX = 0;
-    const currentFlip = agent.flipX;
+
+    onCollide("hit", tag, () =>{
+        agent.health -= player.damage;
+    })
 
     //determines what will happen when agent enters idle state
     agent.onStateEnter("idle", () => {
@@ -459,11 +462,19 @@ function enemyAI(agent){
         if(agent.pos.dist(player.pos) < 84) {
             agent.enterState("attack")
         }
+
+        if(agent.health <= 0){
+            agent.enterState("death")
+        }
     })
 
     agent.onStateUpdate("idle", () => {
         if(agent.pos.dist(player.pos) < 84) {
             agent.enterState("attack")
+        }
+
+        if(agent.health <= 0){
+            agent.enterState("death")
         }
     })
 
@@ -490,6 +501,21 @@ function enemyAI(agent){
         }else{
             agent.flipX = false;
         }
+
+        if(agent.health <= 0){
+            agent.enterState("death")
+        }
+    })
+
+    agent.onStateEnter("death", () => {
+        agent.use(sprite(enemyDeathSprite))
+            agent.play(enemyDeathAnim, {
+                onEnd: () =>{
+                    wait(0.5, () =>{
+                        destroy(agent)
+                    })
+                }
+            })
     })
 }
 
@@ -549,6 +575,10 @@ This allows for scene flow management to transition between levels and menus and
 /*Creating a function to reset the game */
 function restartGame(){
 
+};
+
+function getEnemyFromTag(){
+    
 }
 
 //The main menu is the first scene the user encounters
@@ -583,14 +613,14 @@ scene("MainGame", () =>{
     player.play(playerIdleAnim);
     
     //adding enemies to the map
-    const enemy1 = createEnemy("enemyIdle", 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, "center", 600, 1600, "enemy");
-    enemyAI(enemy1)
+    const enemy1 = createEnemy(64, 64, 375, 1630, "enemy1");
+    enemyAI(enemy1, "enemy1")
 
-    const enemy2 = createEnemy("enemyIdle", 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, "center", 561, 931, "enemy");
-    enemyAI(enemy2)
+    const enemy2 = createEnemy(64,64, 461, 931, "enemy2");
+    enemyAI(enemy2, "enemy2")
 
-    const enemy3 = createEnemy("enemyIdle", 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, "center", 1761, 294, "enemy");
-    enemyAI(enemy3)
+    const enemy3 = createEnemy(64,64, 1661, 294, "enemy3");
+    enemyAI(enemy3, "enemy3")
      //calling the handle inputs funtion
     handleInputs();
 
@@ -618,6 +648,10 @@ scene("MainGame", () =>{
   
     //onUpdate is a built-in function which is called each frame
     onUpdate(()=> {
+
+        debug.log(enemy1.health)
+        debug.log(enemy2.health)
+        debug.log(enemy3.health)
 
         onResize(() => {
             if (window.innerWidth > gameCanvas.width && window.innerHeight > gameCanvas.height) return;
@@ -659,7 +693,7 @@ scene("MainGame", () =>{
         })
     }),
     onAdd("hit", () => {
-        wait(0.2, () =>{
+        wait(0.5, () =>{
             destroyAll("hit")
         })
     }),
@@ -669,7 +703,7 @@ scene("MainGame", () =>{
         for(let i = 0; i< allEnemies.length; i++){
             enemy=allEnemies[i];
         }
-        player.health -= enemy.damage;
+        //player.health -= enemy.damage;
         debug.log(player.health)
     })
 )})
