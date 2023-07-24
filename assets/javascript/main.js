@@ -22,6 +22,7 @@ const backToMenuButton = loadSprite("backToMenu", "assets/images/back-to-menu.pn
 const startGameButton = loadSprite("startGame", "assets/images/start-game.png");
 const controlsButton = loadSprite("controlsButton", "assets/images/controls-button.png");
 const continueButton = loadSprite("continue", "assets/images/continue-button.png");
+const mainMenuButton = loadSprite("mainMenu", "assets/images/main-menu-button.png")
 
 //loading audio assets for game sounds
 const enemyHurtSound = loadSound("hurtSound", "assets/audio/enemy-take-damage.wav");
@@ -479,9 +480,10 @@ function checkPlayerHealth(playerHealth){
         playerDeath();
     }
 }
+
 function playerDeath(){
     player.isDead = true;
-    
+    restartGame();
 }
 
 /*Creating a function to handle enemy AI, which will give the enemy agents basic movement and attack functionality/
@@ -630,7 +632,7 @@ function enemyAI(agent, tag){
  Inputs will correspond to player actions and will be updated each frame.*/
 function handleInputs(){
 
-    if(!player.isDead){
+    if(player.isDead === false){
         onKeyDown("d",() =>{
             moveRight();
         })
@@ -660,14 +662,15 @@ function handleInputs(){
         onKeyPress("space", () => {
             playerJump();
         })
+
     }
+
+    onKeyPress("escape", () => {
+        go("MainMenu");
+    })
 
     onKeyPress("p", () => {
         go("PauseMenu");
-    })
-
-    onKeyPress("r", () => {
-        restartGame();
     })
 };
 
@@ -678,20 +681,8 @@ function hanldeTouchScreenInputs(){
 };
 
 function restartGame(){
-    add([
-        text("YOU WERE DEFEATED"),
-        pos(width()*0.5, height()*0.5),
-    ])
-    add([
-        text("Press 'R' To Continue")
-    ])
-    onKeyPress("r", () =>{
-        destroy(player);
-        player = createPlayer(64, 64, 100, 1620, "player");
-        add(player);
-        go("MainGame")
-    })
-    
+    wait(2, () => go("Death") )
+        
 }
 
 /*A scene is a kaboom function which takes two params; a string ID, and a function.
@@ -763,8 +754,33 @@ scene("PauseMenu", () =>{
         area(),
         "continue"
     ])
+    add([
+        sprite(mainMenuButton),
+        scale(0.5),
+        pos(250, 100),
+        area(),
+        "main"
+    ])
 
     onClick("continue", () =>{
+        go("MainGame");
+    })
+
+    onClick("main", () => {
+        go("MainMenu");
+    })
+})
+
+scene("Death", () => {
+    add([
+        text("   You Were Defeated\n\n Press 'R' to Restart"),
+        pos(80, 80),
+    ])
+
+    onKeyPress("r", () =>{
+        destroy(player);
+        player = createPlayer(64, 64, 100, 1620, "player");
+        add(player);
         go("MainGame");
     })
 })
@@ -883,4 +899,4 @@ scene("MainGame", () =>{
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
-go("MainMenu");
+go("Death");
