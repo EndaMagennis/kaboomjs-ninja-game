@@ -15,151 +15,85 @@ const k = kaboom({
 The third parameter can slice a spritesheet horizontally and vertically and create an animation.*/
 
 //creating player idle animation
-loadSprite('playerIdle', 'assets/sprites/kunoichi/kunoichi-idle.png', {
+loadSprite("playerIdle", "assets/sprites/kunoichi/kunoichi-idle.png", {
     sliceX: 9, sliceY: 1,
-    anims: {'idleAnim': {from: 0, to: 8, loop: true}}
+    anims: {"idleAnim": {from: 0, to: 8, loop: true}}
 });
 
 //creating player run animation
-loadSprite('playerRun', 'assets/sprites/kunoichi/kunoichi-run.png', {
+loadSprite("playerRun", "assets/sprites/kunoichi/kunoichi-run.png", {
     sliceX: 8, sliceY: 1,
-    anims: {'runAnim': {from: 0, to: 7, loop: true}}
+    anims: {"runAnim": {from: 0, to: 7, loop: true}}
 });
 
 //creating player jump animation
-loadSprite('playerJump', 'assets/sprites/kunoichi/kunoichi-jump.png', {
+loadSprite("playerJump", "assets/sprites/kunoichi/kunoichi-jump.png", {
     sliceX: 10, sliceY: 1,
-    anims: {'jumpAnim': {from: 0, to: 9, loop: false}}
+    anims: {"jumpAnim": {from: 0, to: 9, loop: false}}
 });
 
 //creating player attack animation
-loadSprite('playerAttack', 'assets/sprites/kunoichi/kunoichi-attack-2.png', {
+loadSprite("playerAttack", "assets/sprites/kunoichi/kunoichi-attack-2.png", {
     sliceX: 8, sliceY: 1,
-    anims: {'attackAnim': {from: 0, to: 7, loop: false}}
+    anims: {"attackAnim": {from: 0, to: 7, loop: false}}
 });
 
 //creating enemy idle animation
-loadSprite('enemyIdle', 'assets/sprites/samurai/samurai-idle.png', {
+loadSprite("enemyIdle", "assets/sprites/samurai/samurai-idle.png", {
     sliceX: 6, sliceY: 1,
-    anims: {'enemyIdleAnim': {from: 0, to: 5, loop: true}}
+    anims: {"enemyIdleAnim": {from: 0, to: 5, loop: true}}
 });
 
 //creating enemy walkanimation
-loadSprite('enemyMove', 'assets/sprites/samurai/samurai-walk.png', {
+loadSprite("enemyWalk", "assets/sprites/samurai/samurai-walk.png", {
     sliceX: 9, sliceY: 1,
-    anims: {'enemyWalkAnim': {from: 0, to: 8, loop: true}}
+    anims: {"enemyWalkAnim": {from: 0, to: 8, loop: true}}
 });
 
 //creating enemy attack animation
-loadSprite('enemyAttack', 'assets/sprites/samurai/samurai-attack_1.png', {
+loadSprite("enemyAttack", "assets/sprites/samurai/samurai-attack_2.png", {
     sliceX: 5, sliceY: 1,
-    anims: {'enemyAttackAnim':{from: 0, to: 4, loop: false}}
+    anims: {"enemyAttackAnim":{from: 0, to: 4, loop: false}}
 });
 
-loadSprite('enemyDeath', 'assets/sprites/samurai/samurai-dead.png', {
+loadSprite("enemyDeath", "assets/sprites/samurai/samurai-dead.png", {
     sliceX: 6, sliceY: 1,
-    anims: {'enemyDeathAnim':{from: 0, to: 5, loop: false}}
+    anims: {"enemyDeathAnim":{from: 0, to: 5, loop: false}}
 });
 
-/*loadSpritAtlas() is a kaboom function which takes two parameters, a source (usually to a spritesheet) and data.
-You create a dataset of objects by inputing their x,y coordinates and the pixel width and height from the source.
-Each object can then be rendered individually as a static as a sprite.
-Additionally, each object can be sliced and given an anims attribute to generate animations. No such sprites
-were generates this way for this project.*/
-loadSpriteAtlas('assets/tiles/tileset-1.png', {
-    //creating a static ground tile sprite
-    'grassFloor': {
-        x: 32,
-        y: 0,
-        width: 32,
-        height: 16
-    },
-    //creating and alternate ground tile
-    'grassRaised': {
-        x: 16,
-        y: 0,
-        width: 72,
-        height: 64,
-    },
-    //creating a filler sprite
-    'dirt': {
-        x: 32,
-        y: 32,
-        width: 32,
-        height: 32
-    },
-    //creating an alternate verion which can be walked on
-    'walkableDirt': {
-        x: 32,
-        y: 32,
-        width: 32,
-        height: 32
-    },
-    //creating a sprite for cave entrances
-    'caveEntrance': {
-        x: 16,
-        y: 80,
-        width: 32,
-        height: 80
-    },
-    //creating a sprite for the background of caves
-    'caveBack' : {
-        x: 40,
-        y: 96,
-        width: 32,
-        height: 32
-    },
-    //creating a roof for caves
-    'caveTop' : {
-        x: 32,
-        y: 80,
-        width: 48,
-        height: 24,
-    },
-    //creating a sprite for cave exits
-    'caveExit' :{
-        x: 64,
-        y: 80,
-        width: 32,
-        height: 80
-    },
-    //creating a tree sprite
-    'tree1' :{
-        x: 260,
-        y: 0,
-        width: 64,
-        height: 32
-    },
-    //creating a bush sprite
-    'bush': {
-        x: 224,
-        y: 32,
-        width: 32,
-        height: 16
-    },
-    //creating a mushroom sprite
-    'mushrooms': {
-        x: 270,
-        y: 32,
-        width: 64,
-        height: 16
-    }
-})
+const playerIdleSprite = "playerIdle"
+const playerAttackSprite = "playerAttack"
+const playerMoveSprite = "playerRun"
+const playerJumpSprite = "playerJump"
+
+const enemyIdleSprite = "enemyIdle"
+const enemyAttackSprite = "enemyAttack"
+const enemyMoveSprite = "enemyWalk"
+const enemyDeathSprite = "enemyJump"
+
+const playerIdleAnim = "idleAnim"
+const playerAttackAnim = "attackAnim"
+const playerMoveAnim = "runAnim"
+
+const enemyIdleAnim = "enemyIdleAnim"
+const enemyAttackAnim = "enemyAttackAnim"
+const enemyMoveAnim = "enemyWalkAnim"
+const enemyDeathAnim = "enemyDeathAnim"
 
 /*make() is a kaboom method which can take a single argument or an array and create a game object. 
 It is similar to add(), but does not add the game object to the scene*/
 
 //creating a player game object
 const player = make([
-    sprite('playerIdle'),//default animation
+    sprite(playerIdleSprite),//default animation
     area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0, 42)}),//sets a rectangle to collide
     scale(1),//sets sprite scale
-    anchor('center'),//anchors rectangle to center of sprite
+    anchor("center"),//anchors rectangle to center of sprite
     body({stickToPlatform: true}),// gives player physics
     pos(100, 1500),// starting position
     {
         speed: 400,//movement speed
-        health: 100,//player's base health
+        health: 100,//player"s base health
         damage: 25,
         isCurrentlyJumping: false,
 
@@ -168,10 +102,7 @@ const player = make([
     "player",
 ]);
 
-/*Creating an enemy class to instantiate separate instamces of the same enemy.
-This also allows for methods relavant only to the Enemy to be kept within the class.
-This may be a preferable idea for the Player also.*/
-
+/*Creating an function to instantiate separate instances of the same enemy.*/
 function createEnemy(currentSprite, scaleFactor, enemyArea, anchorPoint, positionX, positionY, tag) {
     return add([
         sprite(currentSprite),
@@ -180,25 +111,21 @@ function createEnemy(currentSprite, scaleFactor, enemyArea, anchorPoint, positio
         anchor(anchorPoint),
         body(),
         pos(positionX, positionY),
-        state("idle", ["idle", "move", "attack"]),
+        /*state() creates a finite state machine. 
+        The agent can transition between states to simulate intelligent behaviour.
+        "idle" will be the default state*/
+        state("idle", ["idle", "move", "attack"], {
+            //setting predetermined transitions
+            "idle" : ["attack", "move"],
+            "attack" : ["move", "idle"],
+            "move": ["idle", "attack"],
+        }),
         {
             health: 100,
             speed: 400,
             damage: 50,
-            sprites: {
-                move: "enemyMove",
-                idle: "enemyIdle",
-                attack: "enemyAttack",
-                death: "enemyDeath"
-            },
-            anims: {
-                move: "enemyWalkAnim",
-                idle: "enemyIdleAnim",
-                attack: "enemyAttackAnim",
-                death: "enemyDeathAnim"
-            }
         },
-        "enemy"
+        tag
     ])
 }
 
@@ -215,9 +142,9 @@ const map = [
     "                                                                  #          ",
     "                                            ££££££££££££££££££££££           ",
     "                                       * * |££££££££££££££££££££££/          ",
-    "                            _______________ £££££££££££*£*££££££££           ",
-    "                            # # # # # # # # __________________________       ",
-    "                                            # # # # # # # # # # # # #        ",
+    "                            _______________ £££££££££££*£*££££££££_____      ",
+    "                            # # # # # # # #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~# # #      ",
+    "                                                                             ",
     "        ^ ^  *                                                               ",
     "     _____________                                                           ",
     "     # # # # # # #                                                           ",
@@ -270,107 +197,196 @@ const levelConfig = {
     //the tiles object uses key/value pairs of a string and an array
     //to instantiate objects on the map
     tiles: {
-        "_": () => [//setting the '=' symbol to represent the ground
-            sprite('grassFloor'),
+        "_": () => [//setting the "=" symbol to represent the ground
+            sprite("grassFloor"),
             area(),
             body({isStatic: true}),//gives physics but holds in place
-            anchor('top'),
+            anchor("top"),
             scale(2),
             "ground",//tag which can be referenced for collision detection
         ],
         "+": () => [
-            sprite('grassRaised'),
+            sprite("grassRaised"),
             scale(2),
             area({shape: new Rect(vec2(0), 72, 32), offset: vec2(0, 0)}),
-            anchor('top'),
+            anchor("top"),
             body({isStatic: true}),
             "ground"
         ],
         "#": () =>[
-            sprite('dirt'),
+            sprite("dirt"),
             scale(2),
-            anchor('top'),
+            anchor("top"),
         ],
         "~": () => [
-            sprite('walkableDirt'),
+            sprite("walkableDirt"),
             area(),
             body({isStatic: true}),//gives physics but holds in place
-            anchor('top'),
+            anchor("top"),
             scale(2),
             "ground"
         ],
         "|": () =>[
-            sprite('caveEntrance'),
-            anchor('center'),
+            sprite("caveEntrance"),
+            anchor("center"),
             scale(2),
             "cave"
         ],
         "/": () =>[
-            sprite('caveExit'),
-            anchor('center'),
+            sprite("caveExit"),
+            anchor("center"),
             scale(2),
         ],
         "£": () => [
-            sprite('caveBack'),
-            anchor('center'),
+            sprite("caveBack"),
+            anchor("center"),
             scale(2),
         ],
         "-": () => [
-            sprite('caveTop'),
-            anchor('center'),
+            sprite("caveTop"),
+            anchor("center"),
             scale(2),
         ],
         
         "^": () => [
-            sprite('tree1'),
-            anchor('center'),
+            sprite("tree1"),
+            anchor("center"),
             scale(2)
         ],
         "&": () => [
-            sprite('bush'),
-            anchor('top'),
+            sprite("bush"),
+            anchor("top"),
             scale(2)
         ],
         "*": () => [
-            sprite('mushrooms'),
-            anchor('top'),
+            sprite("mushrooms"),
+            anchor("top"),
             scale(2)
         ],
     }
 };
+
+
+
+/*loadSpritAtlas() is a kaboom function which takes two parameters, a source (usually to a spritesheet) and data.
+You create a dataset of objects by inputing their x,y coordinates and the pixel width and height from the source.
+Each object can then be rendered individually as a static as a sprite.
+Additionally, each object can be sliced and given an anims attribute to generate animations. No such sprites
+were generates this way for this project.*/
+loadSpriteAtlas("assets/tiles/tileset-1.png", {
+    //creating a static ground tile sprite
+    "grassFloor": {
+        x: 32,
+        y: 0,
+        width: 32,
+        height: 16
+    },
+    //creating and alternate ground tile
+    "grassRaised": {
+        x: 16,
+        y: 0,
+        width: 72,
+        height: 64,
+    },
+    //creating a filler sprite
+    "dirt": {
+        x: 32,
+        y: 32,
+        width: 32,
+        height: 32
+    },
+    //creating an alternate verion which can be walked on
+    "walkableDirt": {
+        x: 32,
+        y: 32,
+        width: 32,
+        height: 32
+    },
+    //creating a sprite for cave entrances
+    "caveEntrance": {
+        x: 16,
+        y: 80,
+        width: 32,
+        height: 80
+    },
+    //creating a sprite for the background of caves
+    "caveBack" : {
+        x: 40,
+        y: 96,
+        width: 32,
+        height: 32
+    },
+    //creating a roof for caves
+    "caveTop" : {
+        x: 32,
+        y: 80,
+        width: 48,
+        height: 24,
+    },
+    //creating a sprite for cave exits
+    "caveExit" :{
+        x: 64,
+        y: 80,
+        width: 32,
+        height: 80
+    },
+    //creating a tree sprite
+    "tree1" :{
+        x: 260,
+        y: 0,
+        width: 64,
+        height: 32
+    },
+    //creating a bush sprite
+    "bush": {
+        x: 224,
+        y: 32,
+        width: 32,
+        height: 16
+    },
+    //creating a mushroom sprite
+    "mushrooms": {
+        x: 270,
+        y: 32,
+        width: 64,
+        height: 16
+    }
+})
+
+
 
 /*Creating functons to handle player actions. These functions will be called when the player inputs button commands.
 This should reduce repetition as both desktop and touch screen inputs should call the same functions.*/
 function idle(){
     player.isAttacking = false;
-    player.use(sprite('playerIdle'));
-    player.play('idleAnim');
+    player.use(sprite("playerIdle"));
+    player.play("idleAnim");
 };
 
 function moveRight(){
-    if(player.curAnim() !== 'runAnim' && player.isGrounded()){
-        player.use(sprite('playerRun'));
-        player.play('runAnim');
+    if(player.curAnim() !== "runAnim" && player.isGrounded()){
+        player.use(sprite("playerRun"));
+        player.play("runAnim");
     };
 
-    if (player.direction !== 'right') player.direction = 'right';
+    if (player.direction !== "right") player.direction = "right";
     player.move(player.speed, 0);       
 };
 
 function moveLeft(){
-    if(player.curAnim() !== 'runAnim' && player.isGrounded()){
-        player.use(sprite('playerRun'));
-        player.play('runAnim');
+    if(player.curAnim() !== "runAnim" && player.isGrounded()){
+        player.use(sprite("playerRun"));
+        player.play("runAnim");
     }
 
-    if (player.direction !== 'left') player.direction = 'left';
+    if (player.direction !== "left") player.direction = "left";
     player.move(-player.speed, 0);
 };
 
 function playerJump(){
-    if(player.curAnim() !== 'jumpAnim' && player.isGrounded()){
-        player.use(sprite('playerJump'));
-        player.play('jumpAnim');
+    if(player.curAnim() !== "jumpAnim" && player.isGrounded()){
+        player.use(sprite("playerJump"));
+        player.play("jumpAnim");
         player.jump(600);
         player.isCurrentlyJumping = true;
         !player.isGrounded;
@@ -381,62 +397,91 @@ function attack(){
     //creating a variable to determine player facing
     const currentFlip = player.flipX;
     //checking if player is attacking
-    if(player.curAnim() !== 'attackAnim' && player.isGrounded()){
+    if(player.curAnim() !== "attackAnim" && player.isGrounded()){
         //if not use the sprite and associated animation to attack
-        player.use(sprite('playerAttack'));
-        player.play('attackAnim');
-        //checking the player facing
-        player.flipX = currentFlip;
+        player.use(sprite("playerAttack"));
+
         //where to create a hitbox relative to player
         const slashX = player.pos.x + 65;
         const slashXFlipped = player.pos.x - 80;
         const slashY = player.pos.y;
-        //waiting before creating a hitbox(rough estimate)
-        wait(0.6, ()=>{
+        //onEnd registers the end of the animation
+        player.play("attackAnim", {onEnd: () => 
             add([
             rect(30,30),
             area(),
             pos(currentFlip ? slashXFlipped: slashX, slashY),
             opacity(1),
             "hit"
-            ])
-        });
+            ])});
+        //checking the player facing
+        player.flipX = currentFlip;
+        
     }
 };
 
+/*Creating a function to handle enemy AI, which will give the enemy agents basic movement and attack functionality/
+By using Kaboom's Finite state machine the agent is able to move between different states, update, and exit*/
 function enemyAI(agent){
-    agent.onStateEnter("attack", () =>{
-        debug.log("attacking");
-        agent.use(sprite("enemyAttack"))
-        agent.play("enemyAttackAnim")
-        wait(0.7, ()=>{
-            agent.enterState("idle")
 
+    let flipX = 0;
+    //determines what will happen when agent enters idle state
+    agent.onStateEnter("idle", () => {
+        debug.log("Hello");
+        agent.use(sprite(enemyIdleSprite))
+        agent.play(enemyIdleAnim);
+        //waits for a specified time
+        wait(3, () => {
+            agent.enterState("move")
         })
     })
-    agent.onStateEnter("ilde", () => {
+
+    agent.onStateEnter("move", () => {
+        flipX++;
+        debug.log("World");
+        agent.use(sprite(enemyMoveSprite));
+        agent.play(enemyMoveAnim);
+        wait(5, () => {
+            agent.enterState("idle")
+        })
     })
-    agent.onStateUpdate("idle", () =>{
-        debug.log("idling");
-        agent.use(sprite("enemyIdle"));
-        agent.play("enemyIdleAnim");
-        wait(3, () => {agent.enterState("move")})
-        
-    })
+    //performs update checks and locic checks during current state
     agent.onStateUpdate("move", () => {
-        debug.log("moving");
-        agent.use(sprite("enemyMove"));
-        agent.play("enemyWalkAnim");
-        if(player.pos.x < agent.pos.x){
+        if(flipX%2 === 0){
             agent.flipX = true;
-            agent.move(-player.pos.x, -agent.speed);
+            agent.move(-45, agent.speed *dt())
         }else{
-            agent.move(player.pos.x, agent.speed)
+            agent.flipX = false;
+            agent.move(45, agent.speed *dt())
+
         }
-        if(agent.pos.dist(player.pos) < 80){
-            debug.log("I see you");
-            agent.enterState("attack");
+        //dt() is delta time, and calculates time elapsed between frames and smooths movement betweeen frames
+        if(agent.pos.dist(player.pos) < 84) {
+            agent.enterState("attack")
         }
+    })
+
+    agent.onStateUpdate("idle d", () => {
+        if(agent.pos.dist(player.pos) < 84) {
+            agent.enterState("attack")
+        }
+    })
+    agent.onStateEnter("attack", () => {
+        debug.log("!!");
+        agent.use(sprite(enemyAttackSprite));
+        agent.play(enemyAttackAnim, {onEnd: () => {
+            add([
+                rect(30,30),
+                area(),
+                pos(agent.pos.x + 30, agent.pos.y),
+                opacity(1),
+                "enemyHit"
+            ])}
+        });
+
+    })
+
+    agent.onStateUpdate("attack", () => {
     })
 }
 
@@ -444,41 +489,41 @@ function enemyAI(agent){
  Inputs will correspond to player actions and will be updated each frame.*/
 function handleInputs(){
     //onKeyDown is a built in method which registers continuous press
-    onKeyDown('d',() =>{
+    onKeyDown("d",() =>{
         moveRight();
     })
 
     //onKeyPress is a built in method which registers an instance of a key press
-    onKeyPress('e', () => {
+    onKeyPress("e", () => {
         attack();
     })
     
     //onKeyRelease is a built in method which registers when a button is released
-    onKeyRelease('d', () => {
+    onKeyRelease("d", () => {
         if(player.isGrounded()){
             idle();
         }
     })
 
-    onKeyDown('a',() =>{
+    onKeyDown("a",() =>{
         moveLeft();
     })
 
-    onKeyRelease('a', () => {
+    onKeyRelease("a", () => {
         if(player.isGrounded()){
             idle();
         }
    })
 
-    onKeyPress('space', () => {
+    onKeyPress("space", () => {
         playerJump();
     })
 
-    onKeyPress('p', () => {
-        go('PauseMenu');
+    onKeyPress("p", () => {
+        go("PauseMenu");
     })
 
-    onKeyPress('p', () => {
+    onKeyPress("p", () => {
         restartGame();
     })
 };
@@ -499,22 +544,20 @@ function restartGame(){
 }
 
 //The main menu is the first scene the user encounters
-scene('MainMenu', ()=>{
+scene("MainMenu", ()=>{
     
     const menu = add([
         text("HELLO"),
     ])
-    onKeyPress('space', ()=>{
-        go('MainGame');
+    onKeyPress("space", ()=>{
+        go("MainGame");
     })  
     
 })
 
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
-scene('MainGame', () =>{
-     
-
+scene("MainGame", () =>{
     
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
@@ -528,16 +571,18 @@ scene('MainGame', () =>{
 
     //adding the player object to the scene
     add(player);
-    player.use(sprite('playerIdle'));
-    player.play('idleAnim');
+    player.use(sprite(playerIdleSprite));
+    player.play(playerIdleAnim);
     
     //adding enemies to the map
-    const enemy1 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 440, 1500, "enemy");
-    //enemyAI(enemy1);
-    const enemy2 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 1200, 600, "enemy");
+    const enemy1 = createEnemy("enemyIdle", 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, "center", 600, 1600, "enemy");
+    enemyAI(enemy1)
 
-    const enemy3 = createEnemy('enemyIdle', 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, 'center', 2000, 300, "enemy");
+    const enemy2 = createEnemy("enemyIdle", 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, "center", 561, 931, "enemy");
+    enemyAI(enemy2)
 
+    const enemy3 = createEnemy("enemyIdle", 1, {shape: new Rect(vec2(0), 32, 32), offset: vec2(-16, 48)}, "center", 1761, 294, "enemy");
+    enemyAI(enemy3)
      //calling the handle inputs funtion
     handleInputs();
 
@@ -559,8 +604,7 @@ scene('MainGame', () =>{
 
     //allowing camera to follow player
     player.onUpdate(()=>{
-
-    camPos(player.pos);
+        camPos(player.pos);
     },
     
   
@@ -575,16 +619,16 @@ scene('MainGame', () =>{
         })
 
         //if not running, jumping, or attacking, return to idle
-        if(player.curAnim() !== 'runAnim'&& player.curAnim() !== 'attackAnim' && player.curAnim() !== 'jumpAnim' && player.isGrounded() ){
+        if(player.curAnim() !== "runAnim"&& player.curAnim() !== "attackAnim" && player.curAnim() !== "jumpAnim" && player.isGrounded() ){
             idle(); 
         };
 
-        if(player.curAnim() !== 'jumpAnim' && !player.isGrounded() && player.heightDelta > 0) {
-            player.use(sprite('playerJump'));
-            player.play('jumpAnim');
+        if(player.curAnim() !== "jumpAnim" && !player.isGrounded() && player.heightDelta > 0) {
+            player.use(sprite("playerJump"));
+            player.play("jumpAnim");
         };
 
-        if(player.direction === 'left'){
+        if(player.direction === "left"){
             player.flipX = true;
         } else{
             player.flipX = false;
@@ -609,15 +653,15 @@ scene('MainGame', () =>{
     // })
 )})
 
-scene('PauseMenu', () =>{
+scene("PauseMenu", () =>{
     const menu = add([
         text("Paused"),
     ])
-    onKeyPress('p', ()=>{
-        go('MainGame');
+    onKeyPress("p", ()=>{
+        go("MainGame");
     })
 })
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
-go('MainGame');
+go("MainGame");
