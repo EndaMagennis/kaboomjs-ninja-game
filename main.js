@@ -33,9 +33,15 @@ loadSprite("playerJump", "assets/sprites/kunoichi/kunoichi-jump.png", {
 });
 
 //creating player attack animation
-loadSprite("playerAttack", "assets/sprites/kunoichi/kunoichi-attack-2.png", {
-    sliceX: 8, sliceY: 1,
-    anims: {"attackAnim": {from: 0, to: 7, loop: false}}
+loadSprite("playerAttack", "assets/sprites/kunoichi/kunoichi-attack-1.png", {
+    sliceX: 6, sliceY: 1,
+    anims: {"attackAnim": {from: 0, to: 5, loop: false}}
+});
+
+//creating player death animation
+loadSprite("playerDeath", "assets/sprites/kunoichi/kunoichi-dead.png", {
+    sliceX: 5, sliceY: 1,
+    anims: {"deathAnim": {from: 0, to: 4, loop: false}}
 });
 
 //creating enemy idle animation
@@ -61,24 +67,31 @@ loadSprite("enemyDeath", "assets/sprites/samurai/samurai-dead.png", {
     anims: {"enemyDeathAnim":{from: 0, to: 5, loop: false}}
 });
 
-const playerIdleSprite = "playerIdle"
-const playerAttackSprite = "playerAttack"
-const playerMoveSprite = "playerRun"
-const playerJumpSprite = "playerJump"
+//creating constants for each player sprite
+const playerIdleSprite = "playerIdle";
+const playerAttackSprite = "playerAttack";
+const playerMoveSprite = "playerRun";
+const playerJumpSprite = "playerJump";
+const playerDeathSprite = "playerDeath";
 
-const enemyIdleSprite = "enemyIdle"
-const enemyAttackSprite = "enemyAttack"
-const enemyMoveSprite = "enemyWalk"
-const enemyDeathSprite = "enemyDeath"
+//creating constants for each enemy sprite
+const enemyIdleSprite = "enemyIdle";
+const enemyAttackSprite = "enemyAttack";
+const enemyMoveSprite = "enemyWalk";
+const enemyDeathSprite = "enemyDeath";
 
-const playerIdleAnim = "idleAnim"
-const playerAttackAnim = "attackAnim"
-const playerMoveAnim = "runAnim"
+//creating constants for each player animation
+const playerIdleAnim = "idleAnim";
+const playerAttackAnim = "attackAnim";
+const playerMoveAnim = "runAnim";
+const playerJumpAnim = "jumpAnim";
+const playerDeathAnim = "deathAnim";
 
-const enemyIdleAnim = "enemyIdleAnim"
-const enemyAttackAnim = "enemyAttackAnim"
-const enemyMoveAnim = "enemyWalkAnim"
-const enemyDeathAnim = "enemyDeathAnim"
+//creating constants for each enemy animation
+const enemyIdleAnim = "enemyIdleAnim";
+const enemyAttackAnim = "enemyAttackAnim";
+const enemyMoveAnim = "enemyWalkAnim";
+const enemyDeathAnim = "enemyDeathAnim";
 
 /*make() is a kaboom method which can take a single argument or an array and create a game object. 
 It is similar to add(), but does not add the game object to the scene*/
@@ -124,6 +137,7 @@ function createEnemy(width, height, positionX, positionY, tag) {
             health: 100,
             speed: 400,
             damage: 25,
+            isDead: false
         },
         tag
     ])
@@ -359,14 +373,14 @@ loadSpriteAtlas("assets/tiles/tileset-1.png", {
 This should reduce repetition as both desktop and touch screen inputs should call the same functions.*/
 function idle(){
     player.isAttacking = false;
-    player.use(sprite("playerIdle"));
-    player.play("idleAnim");
+    player.use(sprite(playerIdleSprite));
+    player.play(playerIdleAnim);
 };
 
 function moveRight(){
-    if(player.curAnim() !== "runAnim" && player.isGrounded()){
-        player.use(sprite("playerRun"));
-        player.play("runAnim");
+    if(player.curAnim() !== playerMoveAnim && player.isGrounded() && !player.isDead){
+        player.use(sprite(playerMoveSprite));
+        player.play(playerMoveAnim);
     };
 
     if (player.direction !== "right") player.direction = "right";
@@ -374,9 +388,9 @@ function moveRight(){
 };
 
 function moveLeft(){
-    if(player.curAnim() !== "runAnim" && player.isGrounded()){
-        player.use(sprite("playerRun"));
-        player.play("runAnim");
+    if(player.curAnim() !== playerMoveAnim && player.isGrounded() && !player.isDead){
+        player.use(sprite(playerMoveSprite));
+        player.play(playerMoveAnim);
     }
 
     if (player.direction !== "left") player.direction = "left";
@@ -384,9 +398,9 @@ function moveLeft(){
 };
 
 function playerJump(){
-    if(player.curAnim() !== "jumpAnim" && player.isGrounded()){
-        player.use(sprite("playerJump"));
-        player.play("jumpAnim");
+    if(player.curAnim() !== playerJumpAnim && player.isGrounded() && !player.isDead){
+        player.use(sprite(playerJumpSprite));
+        player.play(playerJumpAnim);
         player.jump(600);
         player.isCurrentlyJumping = true;
         !player.isGrounded;
@@ -402,73 +416,79 @@ function attack(){
         player.use(sprite("playerAttack"));
 
         //where to create a hitbox relative to player
-        const slashX = player.pos.x + 65;
+        const slashX = player.pos.x + 30;
         const slashXFlipped = player.pos.x - 80;
         const slashY = player.pos.y - 20;
         //onEnd registers the end of the animation
-        player.play("attackAnim", {onEnd: () => 
+        player.play("attackAnim", {onEnd: ()=>
             add([
-            rect(60, 100),
+            rect(60, 60),
             area(),
             pos(currentFlip ? slashXFlipped: slashX, slashY),
             opacity(1),
             "hit"
-            ])});
+        ])})         
         //checking the player facing
         player.flipX = currentFlip;
-        
     }
 };
 
 /*Creating a function to handle enemy AI, which will give the enemy agents basic movement and attack functionality/
 By using Kaboom's Finite state machine the agent is able to move between different states, update, and exit*/
 function enemyAI(agent, tag){
-
+    //creating a variable to change enemy flip state
     let flipX = 0;
 
+    //checking if the player hits the agent
     onCollide("hit", tag, () =>{
         agent.health -= player.damage;
     })
 
-    //determines what will happen when agent enters idle state
+    //onStateEnter() determines what will happen when agent enters idle state
     agent.onStateEnter("idle", () => {
         agent.use(sprite(enemyIdleSprite))
         agent.play(enemyIdleAnim);
-        //waits for a specified time
+        //waits for 3s and enters move state
         wait(3, () => {
             agent.enterState("move")
         })
     })
 
     agent.onStateEnter("move", () => {
+        //incrementing the flip variable
         flipX++;
         agent.use(sprite(enemyMoveSprite));
         agent.play(enemyMoveAnim);
+        //agent walks for 5 seconds then enters idle state
         wait(5, () => {
             agent.enterState("idle")
         })
     })
     //performs update checks and locic checks during current state
     agent.onStateUpdate("move", () => {
+        //checking if the flip variable is even
         if(flipX%2 === 0){
+            //if yes, flipping agent and walking left
             agent.flipX = true;
             agent.move(-45, agent.speed *dt())
         }else{
+            //otherwise default and walking right
             agent.flipX = false;
+            //dt() is delta time, and calculates time elapsed between frames and smooths movement betweeen frames
             agent.move(45, agent.speed *dt())
-
         }
-        //dt() is delta time, and calculates time elapsed between frames and smooths movement betweeen frames
+        
         if(agent.pos.dist(player.pos) < 84) {
             agent.enterState("attack")
         }
-
+        //checking if agent health is 0, or less
         if(agent.health <= 0){
             agent.enterState("death")
         }
     })
 
     agent.onStateUpdate("idle", () => {
+        //checking if player is within range
         if(agent.pos.dist(player.pos) < 84) {
             agent.enterState("attack")
         }
@@ -483,15 +503,16 @@ function enemyAI(agent, tag){
         agent.use(sprite(enemyAttackSprite));
         let strikeZoneX = player.pos.x;
         let strikeZoneY = player.pos.y;
+        //after attack animation, creating a hitbox in players position
         agent.play(enemyAttackAnim, {onEnd: () => {
                 add([
-                rect(30,30),
+                rect(60, 60),
                 area(),
                 pos(strikeZoneX, strikeZoneY),
                 opacity(1),
                 "enemyHit"
             ])
-            wait(0.5, () => agent.enterState("idle"));
+            wait(1, () => agent.enterState("idle"));
         }})        
     })
 
@@ -522,36 +543,38 @@ function enemyAI(agent, tag){
 /*Creating a method which will be called during the main gamea in order to register desktop button inputs.
  Inputs will correspond to player actions and will be updated each frame.*/
 function handleInputs(){
-    //onKeyDown is a built in method which registers continuous press
-    onKeyDown("d",() =>{
-        moveRight();
-    })
 
-    //onKeyPress is a built in method which registers an instance of a key press
-    onKeyPress("e", () => {
-        attack();
-    })
-    
-    //onKeyRelease is a built in method which registers when a button is released
-    onKeyRelease("d", () => {
-        if(player.isGrounded()){
-            idle();
-        }
-    })
+    if(!player.isDead){
+        onKeyDown("d",() =>{
+            moveRight();
+        })
 
-    onKeyDown("a",() =>{
-        moveLeft();
-    })
+        //onKeyPress is a built in method which registers an instance of a key press
+        onKeyPress("e", () => {
+            attack();
+        })
 
-    onKeyRelease("a", () => {
-        if(player.isGrounded()){
-            idle();
-        }
-   })
+        //onKeyRelease is a built in method which registers when a button is released
+        onKeyRelease("d", () => {
+            if(player.isGrounded()){
+                idle();
+            }
+        })
+        //onKeyDown is a built in method which registers continuous press
+        onKeyDown("a",() =>{
+            moveLeft();
+        })
 
-    onKeyPress("space", () => {
-        playerJump();
-    })
+        onKeyRelease("a", () => {
+            if(player.isGrounded()){
+                idle();
+            }
+        })
+
+        onKeyPress("space", () => {
+            playerJump();
+        })
+    }
 
     onKeyPress("p", () => {
         go("PauseMenu");
@@ -567,30 +590,24 @@ function handleInputs(){
 function hanldeTouchScreenInputs(){
 
 };
+
 /*A scene is a kaboom function which takes two params; a string ID, and a function.
 The scene represents a level, where the function handles all game logic intended for that particular scene.
 This allows for scene flow management to transition between levels and menus and vice versa.*/
-
-
-/*Creating a function to reset the game */
-function restartGame(){
-
-};
-
-function getEnemyFromTag(){
-    
-}
-
 //The main menu is the first scene the user encounters
 scene("MainMenu", ()=>{
     
-    const menu = add([
-        text("HELLO"),
+    const startButton = add([
+        pos(k.width()*0.5-50, k.height()*0.5-25),
+        rect(100, 50),
+        opacity(1),
+        outline(4),
+        area(),
+        "startButton"
+    ])    
+    onClick("startButton", () =>[
+        go("MainGame")
     ])
-    onKeyPress("space", ()=>{
-        go("MainGame");
-    })  
-    
 })
 
 
@@ -613,7 +630,7 @@ scene("MainGame", () =>{
     player.play(playerIdleAnim);
     
     //adding enemies to the map
-    const enemy1 = createEnemy(64, 64, 375, 1630, "enemy1");
+    const enemy1 = createEnemy(64, 64, 600, 1630, "enemy1");
     enemyAI(enemy1, "enemy1")
 
     const enemy2 = createEnemy(64,64, 461, 931, "enemy2");
@@ -640,34 +657,18 @@ scene("MainGame", () =>{
         pos(2448, 0)
     ])
 
-    //allowing camera to follow player
+    //checking the update conditions of the player
     player.onUpdate(()=>{
+        //moveing the camera with the player
         camPos(player.pos);
-    },
-    
-  
-    //onUpdate is a built-in function which is called each frame
-    onUpdate(()=> {
-
-        debug.log(enemy1.health)
-        debug.log(enemy2.health)
-        debug.log(enemy3.health)
-
-        onResize(() => {
-            if (window.innerWidth > gameCanvas.width && window.innerHeight > gameCanvas.height) return;
-            const scale = Math.min(window.innerHeight/gameCanvas.height, window.innerWidth/gameCanvas.width);
-    
-            gameCanvas.style.transform = `scale(${scale})`;
-        })
-
-        //if not running, jumping, or attacking, return to idle
-        if(player.curAnim() !== "runAnim"&& player.curAnim() !== "attackAnim" && player.curAnim() !== "jumpAnim" && player.isGrounded() ){
+        //checking that no other animations are taking place
+        if(player.curAnim() !== playerMoveAnim && player.curAnim() !== playerAttackAnim && player.curAnim() !== playerJumpAnim && player.isGrounded()){
             idle(); 
         };
 
-        if(player.curAnim() !== "jumpAnim" && !player.isGrounded() && player.heightDelta > 0) {
-            player.use(sprite("playerJump"));
-            player.play("jumpAnim");
+        if(player.curAnim() !== playerJumpAnim && !player.isGrounded() && player.heightDelta > 0) {
+            player.use(sprite(playerJumpSprite));
+            player.play(playerJumpAnim);
         };
 
         if(player.direction === "left"){
@@ -676,24 +677,41 @@ scene("MainGame", () =>{
             player.flipX = false;
         };
 
-        if(player.pos.y > 2000  || player.health <=0){
-            destroy(player);
-            restartGame();
-        };
+        if(player.pos.y > 2000){
+            player.health = 0;
+        }
+
+        if(player.health <= 0  && player.curAnim() !== playerDeathAnim){
+            player.isDead = true;
+            player.use(sprite(playerDeathSprite));
+            player.play(playerDeathAnim, {onEnd: () =>
+            destroy(player)})
+        }
+    },
+    
+  
+    //onUpdate is a built-in function which is called each frame
+    onUpdate(()=> {
+
+        //if not running, jumping, or attacking, return to idle
+        
     }),
 
     //check if the player is touching the ground and set
     onCollide("player", "ground", () => {
         player.isGrounded;
         !player.isCurrentlyJumping;
+        console.log("grounded")
     }),
+
     onAdd("enemyHit", () => {
         wait(0.2, ()=> {
             destroyAll("enemyHit")
         })
     }),
+
     onAdd("hit", () => {
-        wait(0.5, () =>{
+        wait(0.2, () =>{
             destroyAll("hit")
         })
     }),
@@ -703,8 +721,7 @@ scene("MainGame", () =>{
         for(let i = 0; i< allEnemies.length; i++){
             enemy=allEnemies[i];
         }
-        //player.health -= enemy.damage;
-        debug.log(player.health)
+        player.health -= enemy.damage;
     })
 )})
 
@@ -719,4 +736,4 @@ scene("PauseMenu", () =>{
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
-go("MainGame");
+go("MainMenu");
