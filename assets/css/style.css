@@ -8,33 +8,33 @@ body {
     min-height: 100vh;
     width: 100%;
     flex-direction: column;
-    background: blue;
+    background: rgba(29, 29, 204, 0.842);
     text-align: center;
-  }
+}
 
-  main {
+main {
     flex: 1 0 auto;
     display: flex;
     width: 100%;
     flex-direction: column;
     align-items: center;
     justify-content: center;
- }
+}
 
 header{
+    font-size: 40px;
     flex-direction: column;
-    background: aqua;
+    background: rgb(45, 165, 165);
     width: 100%;
     padding: 10px;
     border-bottom: 2px solid white;
+    color: aliceblue;
     justify-content: center;
     align-content: center;
 }
 
 
-
 #game-canvas {
-    border: 3px solid red;
     background: 
         white
         url('../backgrounds/background-2.png')
@@ -46,6 +46,17 @@ header{
 footer{
     border-top: 1px solid white;
     width: 100%;
+    padding: 10px;
+    background: rgb(45, 165, 165);
+
+
+}
+
+a {
+    font-size: 40px;
+    text-decoration: none;
+    color: #FAFAFA;
+    
 }
 
 
