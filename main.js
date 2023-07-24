@@ -109,16 +109,16 @@ function createEnemy(currentSprite, scaleFactor, enemyArea, anchorPoint, positio
         scale(scaleFactor),
         area(enemyArea),
         anchor(anchorPoint),
-        body(),
+        body({mass: 200}),
         pos(positionX, positionY),
         /*state() creates a finite state machine. 
         The agent can transition between states to simulate intelligent behaviour.
         "idle" will be the default state*/
         state("idle", ["idle", "move", "attack"], {
             //setting predetermined transitions
-            "idle" : ["attack", "move"],
-            "attack" : ["move", "idle"],
-            "move": ["idle", "attack"],
+            "idle" : ["attack", "move", "idle"],
+            "attack" : ["move", "idle", "attack"],
+            "move": ["idle", "attack", "move"],
         }),
         {
             health: 100,
@@ -425,9 +425,10 @@ By using Kaboom's Finite state machine the agent is able to move between differe
 function enemyAI(agent){
 
     let flipX = 0;
+    const currentFlip = agent.flipX;
+
     //determines what will happen when agent enters idle state
     agent.onStateEnter("idle", () => {
-        debug.log("Hello");
         agent.use(sprite(enemyIdleSprite))
         agent.play(enemyIdleAnim);
         //waits for a specified time
@@ -438,7 +439,6 @@ function enemyAI(agent){
 
     agent.onStateEnter("move", () => {
         flipX++;
-        debug.log("World");
         agent.use(sprite(enemyMoveSprite));
         agent.play(enemyMoveAnim);
         wait(5, () => {
@@ -461,27 +461,35 @@ function enemyAI(agent){
         }
     })
 
-    agent.onStateUpdate("idle d", () => {
+    agent.onStateUpdate("idle", () => {
         if(agent.pos.dist(player.pos) < 84) {
             agent.enterState("attack")
         }
     })
+
     agent.onStateEnter("attack", () => {
-        debug.log("!!");
+        
         agent.use(sprite(enemyAttackSprite));
+        let strikeZoneX = player.pos.x;
+        let strikeZoneY = player.pos.y;
         agent.play(enemyAttackAnim, {onEnd: () => {
-            add([
+                add([
                 rect(30,30),
                 area(),
-                pos(agent.pos.x + 30, agent.pos.y),
+                pos(strikeZoneX, strikeZoneY),
                 opacity(1),
                 "enemyHit"
-            ])}
-        });
-
+            ])
+            wait(0.5, () => agent.enterState("idle"));
+        }})        
     })
 
     agent.onStateUpdate("attack", () => {
+        if(player.pos.x < agent.pos.x){
+            agent.flipX =true
+        }else{
+            agent.flipX = false;
+        }
     })
 }
 
@@ -645,12 +653,25 @@ scene("MainGame", () =>{
         player.isGrounded;
         !player.isCurrentlyJumping;
     }),
+    onAdd("enemyHit", () => {
+        wait(0.2, ()=> {
+            destroyAll("enemyHit")
+        })
+    }),
+    onAdd("hit", () => {
+        wait(0.2, () =>{
+            destroyAll("hit")
+        })
+    }),
 
-    //checking if enemy is hit by player attack
-    // onCollide("enemy", "hit", () => {
-    //     debug.log("hit");
-    //     enemy.health -= player.damage;
-    // })
+    onCollide("player", "enemyHit", (enemy) =>{
+        const allEnemies = get("enemy");
+        for(let i = 0; i< allEnemies.length; i++){
+            enemy=allEnemies[i];
+        }
+        player.health -= enemy.damage;
+        debug.log(player.health)
+    })
 )})
 
 scene("PauseMenu", () =>{
