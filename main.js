@@ -14,6 +14,14 @@ const k = kaboom({
 /*loadSprite() can be take two or three parameters. With two parameters; a string ID, and a filepath, a static sprite is created.
 The third parameter can slice a spritesheet horizontally and vertically and create an animation.*/
 
+//loading background image for controlScreen
+const controlBg = loadSprite("controls", "assets/images/controls.png");
+
+//loading button assets for menu navigation
+const backToMenuButton = loadSprite("backToMenu", "assets/images/back-to-menu.png");
+const startGameButton = loadSprite("startGame", "assets/images/start-game.png");
+const controlsButton = loadSprite("controlsButton", "assets/image/controls-button.png");
+
 //creating player idle animation
 loadSprite("playerIdle", "assets/sprites/kunoichi/kunoichi-idle.png", {
     sliceX: 9, sliceY: 1,
@@ -92,6 +100,7 @@ const enemyIdleAnim = "enemyIdleAnim";
 const enemyAttackAnim = "enemyAttackAnim";
 const enemyMoveAnim = "enemyWalkAnim";
 const enemyDeathAnim = "enemyDeathAnim";
+
 
 /*make() is a kaboom method which can take a single argument or an array and create a game object. 
 It is similar to add(), but does not add the game object to the scene*/
@@ -279,7 +288,6 @@ const levelConfig = {
         ],
     }
 };
-
 
 
 /*loadSpritAtlas() is a kaboom function which takes two parameters, a source (usually to a spritesheet) and data.
@@ -580,7 +588,7 @@ function handleInputs(){
         go("PauseMenu");
     })
 
-    onKeyPress("p", () => {
+    onKeyPress("r", () => {
         restartGame();
     })
 };
@@ -591,29 +599,60 @@ function hanldeTouchScreenInputs(){
 
 };
 
+function restartGame(){
+    readd(player)
+    go("MainGame")
+}
+
 /*A scene is a kaboom function which takes two params; a string ID, and a function.
 The scene represents a level, where the function handles all game logic intended for that particular scene.
 This allows for scene flow management to transition between levels and menus and vice versa.*/
 //The main menu is the first scene the user encounters
 scene("MainMenu", ()=>{
     
-    const startButton = add([
-        pos(k.width()*0.5-50, k.height()*0.5-25),
-        rect(100, 50),
-        opacity(1),
-        outline(4),
+    add([
+        sprite(startGameButton),
+        pos(250, 100),
+        scale(0.5),
         area(),
         "startButton"
-    ])    
-    onClick("startButton", () =>[
-        go("MainGame")
     ])
+    
+    add([
+        sprite(controlsButton),
+        pos(250, 200),
+        scale(0.5),
+        area(),
+        "controlsButton"
+    ])
+
+    onClick("startButton", () =>{
+        go("MainGame")
+    })
+
+    onClick("controlsButton", () =>{
+        go("ControlsMenu")
+    })
 })
 
+scene("ControlsMenu", () => {
+    add([
+        sprite(controlBg),
+        scale(0.5),
+        pos(120, 100)
+    ])
+
+    const backButton = add([
+        
+    ])
+
+    onClick("backButton", () => {
+        go("MainMenu")
+    })
+})
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene("MainGame", () =>{
-    
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
     addLevel(map, levelConfig);
@@ -626,8 +665,6 @@ scene("MainGame", () =>{
 
     //adding the player object to the scene
     add(player);
-    player.use(sprite(playerIdleSprite));
-    player.play(playerIdleAnim);
     
     //adding enemies to the map
     const enemy1 = createEnemy(64, 64, 600, 1630, "enemy1");
@@ -689,14 +726,6 @@ scene("MainGame", () =>{
         }
     },
     
-  
-    //onUpdate is a built-in function which is called each frame
-    onUpdate(()=> {
-
-        //if not running, jumping, or attacking, return to idle
-        
-    }),
-
     //check if the player is touching the ground and set
     onCollide("player", "ground", () => {
         player.isGrounded;
