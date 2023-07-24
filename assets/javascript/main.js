@@ -681,7 +681,7 @@ function hanldeTouchScreenInputs(){
 };
 
 function restartGame(){
-    wait(2, () => go("Death") )
+    wait(2, () => go("Deathr") )
         
 }
 
@@ -899,4 +899,4 @@ scene("MainGame", () =>{
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
-go("Death");
+go("MainMenu");
