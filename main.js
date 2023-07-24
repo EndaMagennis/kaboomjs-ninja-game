@@ -20,7 +20,8 @@ const controlBg = loadSprite("controls", "assets/images/controls.png");
 //loading button assets for menu navigation
 const backToMenuButton = loadSprite("backToMenu", "assets/images/back-to-menu.png");
 const startGameButton = loadSprite("startGame", "assets/images/start-game.png");
-const controlsButton = loadSprite("controlsButton", "assets/image/controls-button.png");
+const controlsButton = loadSprite("controlsButton", "assets/images/controls-button.png");
+const continueButton = loadSprite("continue", "assets/images/continue-button.png")
 
 //creating player idle animation
 loadSprite("playerIdle", "assets/sprites/kunoichi/kunoichi-idle.png", {
@@ -112,13 +113,12 @@ const player = make([
     scale(1),//sets sprite scale
     anchor("center"),//anchors rectangle to center of sprite
     body({stickToPlatform: true}),// gives player physics
-    pos(100, 1500),// starting position
+    pos(100, 1620),// starting position
     {
         speed: 400,//movement speed
         health: 100,//player"s base health
         damage: 25,
         isCurrentlyJumping: false,
-
     },
     //a string attribute acts as a tag which can be used in collision detection and other logic
     "player",
@@ -600,8 +600,8 @@ function hanldeTouchScreenInputs(){
 };
 
 function restartGame(){
-    readd(player)
-    go("MainGame")
+    destroy(player);
+    go("MainGame");
 }
 
 /*A scene is a kaboom function which takes two params; a string ID, and a function.
@@ -642,12 +642,40 @@ scene("ControlsMenu", () => {
         pos(120, 100)
     ])
 
-    const backButton = add([
-        
+    add([
+        sprite(backToMenuButton),
+        scale(0.5),
+        area(),
+        "backButton"
     ])
 
     onClick("backButton", () => {
         go("MainMenu")
+    })
+})
+
+scene("PauseMenu", () =>{
+    add([
+        text("Paused"),
+        pos(240, 50),
+    ])
+    add([
+        text("Objective: Defeat all three enemies within the time limit", {
+            size: 16,
+        }),
+        
+        pos(50, 300),
+    ])
+    add([
+        sprite(continueButton),
+        scale(0.5),
+        pos(250, 160),
+        area(),
+        "continue"
+    ])
+
+    onClick("continue", () =>{
+        go("MainGame");
     })
 })
 
@@ -726,13 +754,14 @@ scene("MainGame", () =>{
         }
     },
     
-    //check if the player is touching the ground and set
+    //check if the player is touching the ground and set isGrounded to true
     onCollide("player", "ground", () => {
         player.isGrounded;
         !player.isCurrentlyJumping;
         console.log("grounded")
     }),
 
+    //removing the hit boxes to avoid accidental collisions
     onAdd("enemyHit", () => {
         wait(0.2, ()=> {
             destroyAll("enemyHit")
@@ -744,7 +773,7 @@ scene("MainGame", () =>{
             destroyAll("hit")
         })
     }),
-
+    //checking if the player gets hit
     onCollide("player", "enemyHit", (enemy) =>{
         const allEnemies = get("enemy");
         for(let i = 0; i< allEnemies.length; i++){
@@ -754,14 +783,7 @@ scene("MainGame", () =>{
     })
 )})
 
-scene("PauseMenu", () =>{
-    const menu = add([
-        text("Paused"),
-    ])
-    onKeyPress("p", ()=>{
-        go("MainGame");
-    })
-})
+
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
