@@ -148,16 +148,15 @@ function createPlayer(width, height, positionX, positionY, tag){
     ])
 }
 
-//initialising player
-let player = createPlayer(64, 64, 100, 1620, "player");
 
+let player;
 
 /*Creating an function to instantiate separate instances of the same enemy.*/
 function createEnemy(width, height, positionX, positionY, tag) {
     return add([
         sprite(enemyIdleSprite),
         scale(1),
-        area({shape: new Rect(vec2(0), width, height), offset:(vec2(0, 32))}),
+        area({shape: new Rect(vec2(0), width, height), offset:(vec2(-16, 32))}),
         anchor('center'),
         body({mass: 200}),
         pos(positionX, positionY),
@@ -206,9 +205,9 @@ const map = [
     "                         _________                                           ",
     "                         # # # # #                                           ",
     "                                                                             ",
-    "                                            ^ &  *                           ",
-    "                                         _________________                   ",
-    "                                         # # # # # # # # #                   ",
+    "                                          ^ &  *                             ",
+    "                                       _________________                     ",
+    "                                       # # # # # # # # #                     ",
     "                                                                             ",
     "          & & ^     ^ ^                                                      ",
     "       #_____________________                                                ",
@@ -669,6 +668,8 @@ function handleInputs(){
     }
 
     onKeyPress("escape", () => {
+        destroy(player);
+        destroyAll("enemy");
         go("MainMenu");
     })
 
@@ -790,6 +791,9 @@ scene("Death", () => {
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene("MainGame", () =>{
+
+    //initialising player
+    player = createPlayer(64, 64, 100, 1620, "player");
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
     addLevel(map, levelConfig);
