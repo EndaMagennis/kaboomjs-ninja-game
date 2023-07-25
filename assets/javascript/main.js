@@ -29,7 +29,15 @@ const backToMenuButton = loadSprite("backToMenu", "assets/images/back-to-menu.pn
 const startGameButton = loadSprite("startGame", "assets/images/start-game.png");
 const controlsButton = loadSprite("controlsButton", "assets/images/controls-button.png");
 const continueButton = loadSprite("continue", "assets/images/continue-button.png");
-const mainMenuButton = loadSprite("mainMenu", "assets/images/main-menu-button.png")
+const mainMenuButton = loadSprite("mainMenu", "assets/images/main-menu-button.png");
+
+//loading image assets for touchscreen
+const touchScreenMenu = loadSprite("touchscreenMenu", "assets/images/burger-icon.png");
+const touchScreenrRestart = loadSprite("touchscreenRestart", "assets/images/refresh-icon.png");
+const touchScreenRight= loadSprite("touchscreenRight", "assets/images/chevron.png");
+const touchScreenLeft = loadSprite("touchscreenLeft", "assets/images/chevron-left.png");
+const touchScreenJump = loadSprite("touchscreenJump", "assets/images/button-jump.png");
+const touchScreenAttack = loadSprite("touchscreenAttack", "assets/images/button-attack.png");
 
 //loading audio assets for game sounds
 const enemyHurtSound = loadSound("hurtSound", "assets/audio/enemy-take-damage.wav");
@@ -38,6 +46,7 @@ const playerHurtSound = loadSound("playerHurtSound", "assets/audio/player-hurt.w
 const playerAttackSound = loadSound("playerAttackSound", "assets/audio/player-strike.wav");
 const playerLandingSound = loadSound("playerLanding", "assets/audio/landing.wav");
 const gameMusic = loadSound("gameMusic", "assets/audio/game-music.mp3");
+
 
 //Creating animations for the player character
 //creating player idle animation
@@ -700,13 +709,6 @@ function handleInputs(){
     })
 };
 
-/**
- * Creating a method which will be called during the onUpdate() method in order to register touch screen inputs.
- * Inputs will correspond to player actions and will be updated each frame.
- */
-function hanldeTouchScreenInputs(){
-
-};
 
 function restartGame(){
     wait(2, () => go("Death") )
@@ -818,6 +820,7 @@ scene("Death", () => {
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene("MainGame", () =>{
+
     //checking if the game has been paused
     if(pauseCount === 0){
         //if not, initialising player and enemies
@@ -831,7 +834,7 @@ scene("MainGame", () =>{
     addLevel(map, levelConfig);
 
     /*camScale sets a virtual z axis distance from the player, simulating a camera distance */
-    camScale(0.8);
+    camScale(1.2);
 
     /*setGravity sets a virtual gravity which acts on objcets with a .body() attribute*/
     setGravity(1000); 
@@ -850,8 +853,8 @@ scene("MainGame", () =>{
     enemyAI(enemy3, "enemy3");
 
     //calling the handle inputs funtion
-    handleInputs(player);
-    
+    handleInputs();
+
     //adding invisible walls
     add([
         rect(16, 1760),
@@ -939,4 +942,4 @@ scene("MainGame", () =>{
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
-go("MainMenu");
+go("MainGame");
