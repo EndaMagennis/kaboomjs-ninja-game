@@ -10,3 +10,5 @@ cloudinary_python.txt
 dist
 .vscode
 .parcel-cache
+package-lock.json
+package.json
