@@ -1,8 +1,10 @@
 //adding a reference to the html canvas element to use as kabooms canvas 
 let gameCanvas = document.querySelector("#game-canvas");
 
-/*The Kaboom library must be initialised before variables related to the library
-can be made. Initialising allows for access to Kabooms built-in functions.*/
+/**
+ * The Kaboom library must be initialised before variables related to the library
+ * can be made. Initialising allows for access to Kabooms built-in functions.
+ */
 const k = kaboom({
     fullscreen: true,
     canvas: gameCanvas,
@@ -13,9 +15,11 @@ const k = kaboom({
     background: [0,0,0,0]
 });
 
-/*loadSprite() is a Kaboom method which can take two or three parameters. 
-With two parameters; a string ID, and a filepath, a static sprite is created.
-The third parameter can slice a spritesheet horizontally and vertically and create an animation.*/
+/**
+ * loadSprite() is a Kaboom method which can take two or three parameters. 
+ * With two parameters; a string ID, and a filepath, a static sprite is created.
+ * The third parameter can slice a spritesheet horizontally and vertically and create an animation.
+ */
 
 //loading background image for controlScreen
 const controlBg = loadSprite("controls", "assets/images/controls.png");
@@ -125,8 +129,11 @@ const enemyMoveAnim = "enemyWalkAnim";
 const enemyDeathAnim = "enemyDeathAnim";
 const enemyHurtAnim = "enemyHurtAnim";
 
-/*make() is a kaboom method which can take a single argument or an array and create a game object. 
-It is similar to add(), but does not add the game object to the scene*/
+let pauseCount = 0;
+/**
+ * make() is a kaboom method which can take a single argument or an array and create a game object. 
+ * It is similar to add(), but does not add the game object to the scene
+ */
 
 //creating a player game object
 function createPlayer(width, height, positionX, positionY, tag){
@@ -148,12 +155,15 @@ function createPlayer(width, height, positionX, positionY, tag){
     ])
 }
 
-
+//initialising player object
 let player;
 
-/*Creating an function to instantiate separate instances of the same enemy.*/
+/**
+ * Creating an function to instantiate separate instances of the same enemy.
+ * Also resets enemies when scene is reinitialized
+ */
 function createEnemy(width, height, positionX, positionY, tag) {
-    return add([
+    return make([
         sprite(enemyIdleSprite),
         scale(1),
         area({shape: new Rect(vec2(0), width, height), offset:(vec2(-16, 32))}),
@@ -179,10 +189,14 @@ function createEnemy(width, height, positionX, positionY, tag) {
         },
         tag
     ])
-}
+};
+
+let enemy1;
+let enemy2;
+let enemy3;
 
 
-/*Creating a map constant; an array of strings, to pass as the first parameter to the addLevel() method*/
+//Creating a map constant; an array of strings, to pass as the first parameter to the addLevel() method
 const map = [
     "                                                                             ",
     "                                                                             ",
@@ -242,7 +256,7 @@ const map = [
     " # # # # #~~~~~~~~~~~~~~~~~~~~~~# # # # # #       # # # # # # # # # # # # # #"
 ]
 
-/*Creating a level configuation object, to pass as a second parameter to the addLevel() method to render sprites as a level*/
+//Creating a level configuation object, to pass as a second parameter to the addLevel() method to render sprites as a level
 const levelConfig = {
     tileWidth:32,//pixel width of each tile
     tileHeight:32,//pixel height of each tile
@@ -319,11 +333,13 @@ const levelConfig = {
 };
 
 
-/*loadSpritAtlas() is a kaboom function which takes two parameters, a source (usually to a spritesheet) and data.
-You create a dataset of objects by inputing their x,y coordinates and the pixel width and height from the source.
-Each object can then be rendered individually as a static as a sprite.
-Additionally, each object can be sliced and given an anims attribute to generate animations. No such sprites
-were generates this way for this project.*/
+/**
+ * loadSpritAtlas() is a kaboom function which takes two parameters, a source (usually to a spritesheet) and data.
+ * You create a dataset of objects by inputing their x,y coordinates and the pixel width and height from the source.
+ * Each object can then be rendered individually as a static as a sprite.
+ * Additionally, each object can be sliced and given an anims attribute to generate animations. No such sprites
+ * were generated this way for this project.
+*/
 loadSpriteAtlas("assets/tiles/tileset-1.png", {
     //creating a static ground tile sprite
     "grassFloor": {
@@ -406,8 +422,10 @@ loadSpriteAtlas("assets/tiles/tileset-1.png", {
 
 
 
-/*Creating functons to handle player actions. These functions will be called when the player inputs button commands.
-This should reduce repetition as both desktop and touch screen inputs should call the same functions.*/
+/**
+ * Creating functons to handle player actions. These functions will be called when the player inputs button commands.
+ * This should reduce repetition as both desktop and touch screen inputs should call the same functions.
+ */
 function idle(){
     player.use(sprite(playerIdleSprite));
     player.play(playerIdleAnim);
@@ -488,8 +506,10 @@ function playerDeath(){
     restartGame();
 }
 
-/*Creating a function to handle enemy AI, which will give the enemy agents basic movement and attack functionality/
-By using Kaboom's Finite state machine the agent is able to move between different states, update, and exit*/
+/**
+ * Creating a function to handle enemy AI, which will give the enemy agents basic movement and attack functionality.
+ * By using Kaboom's Finite state machine the agent is able to move between different states, update, and exit
+ */
 function enemyAI(agent, tag){
     //creating a variable to change enemy flip state
     let flipX = 0;
@@ -630,8 +650,10 @@ function enemyAI(agent, tag){
     })
 }
 
-/*Creating a method which will be called during the main gamea in order to register desktop button inputs.
- Inputs will correspond to player actions and will be updated each frame.*/
+/**
+ * Creating a method which will be called during the main gamea in order to register desktop button inputs.
+ *  Inputs will correspond to player actions and will be updated each frame.
+ */
 function handleInputs(){
 
     if(player.isDead === false){
@@ -678,23 +700,28 @@ function handleInputs(){
     })
 };
 
-/*Creating a method which will be called during the onUpdate() method in order to register touch screen inputs.
- Inputs will correspond to player actions and will be updated each frame.*/
+/**
+ * Creating a method which will be called during the onUpdate() method in order to register touch screen inputs.
+ * Inputs will correspond to player actions and will be updated each frame.
+ */
 function hanldeTouchScreenInputs(){
 
 };
 
 function restartGame(){
     wait(2, () => go("Death") )
-        
 }
 
-/*A scene is a kaboom function which takes two params; a string ID, and a function.
-The scene represents a level, where the function handles all game logic intended for that particular scene.
-This allows for scene flow management to transition between levels and menus and vice versa.*/
+/**
+ * A scene is a kaboom function which takes two params; a string ID, and a function.
+ * The scene represents a level, where the function handles all game logic intended for that particular scene.
+ * This allows for scene flow management to transition between levels and menus and vice versa.
+ */
+
 //The main menu is the first scene the user encounters
 scene("MainMenu", ()=>{
-    
+    pauseCount = 0;
+    //adding start game button
     add([
         sprite(startGameButton),
         pos(250, 100),
@@ -702,7 +729,7 @@ scene("MainMenu", ()=>{
         area(),
         "startButton"
     ])
-    
+    //adding controls menu button
     add([
         sprite(controlsButton),
         pos(250, 200),
@@ -710,7 +737,7 @@ scene("MainMenu", ()=>{
         area(),
         "controlsButton"
     ])
-
+    //onClick registers an interaction with the area() component of an object
     onClick("startButton", () =>{
         go("MainGame")
     })
@@ -721,12 +748,13 @@ scene("MainMenu", ()=>{
 })
 
 scene("ControlsMenu", () => {
+    //adding the controls image
     add([
         sprite(controlBg),
         scale(0.5),
         pos(120, 100)
     ])
-
+    //adding a button to return to main menu
     add([
         sprite(backToMenuButton),
         scale(0.5),
@@ -740,16 +768,17 @@ scene("ControlsMenu", () => {
 })
 
 scene("PauseMenu", () =>{
+    pauseCount ++;
     add([
         text("Paused"),
         pos(240, 50),
     ])
     add([
-        text("Objective: Defeat all three enemies within the time limit", {
+        text("OBJECTIVE:\nDefeat all three enemies\nwithin the time limit", {
             size: 16,
         }),
         
-        pos(50, 300),
+        pos(230, 300),
     ])
     add([
         sprite(continueButton),
@@ -767,7 +796,7 @@ scene("PauseMenu", () =>{
     ])
 
     onClick("continue", () =>{
-        go("MainGame");
+        go("MainGame")
     })
 
     onClick("main", () => {
@@ -776,24 +805,27 @@ scene("PauseMenu", () =>{
 })
 
 scene("Death", () => {
+    pauseCount = 0;
     add([
         text("   You Were Defeated\n\n Press 'R' to Restart"),
         pos(80, 80),
     ])
 
     onKeyPress("r", () =>{
-        destroy(player);
-        player = createPlayer(64, 64, 100, 1620, "player");
-        add(player);
         go("MainGame");
     })
 })
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene("MainGame", () =>{
-
-    //initialising player
-    player = createPlayer(64, 64, 100, 1620, "player");
+    //checking if the game has been paused
+    if(pauseCount === 0){
+        //if not, initialising player and enemies
+        player = createPlayer(64, 64, 100, 1620, "player");
+        enemy1 = createEnemy(64, 64, 600, 1630, "enemy1");
+        enemy2 = createEnemy(64,64, 461, 931, "enemy2");
+        enemy3 = createEnemy(64,64, 1661, 294, "enemy3");
+    }
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
     addLevel(map, levelConfig);
@@ -806,19 +838,20 @@ scene("MainGame", () =>{
 
     //adding the player object to the scene
     add(player);
-    //adding enemies to the map
-    const enemy1 = createEnemy(64, 64, 600, 1630, "enemy1");
-    enemyAI(enemy1, "enemy1")
 
-    const enemy2 = createEnemy(64,64, 461, 931, "enemy2");
-    enemyAI(enemy2, "enemy2")
+    //adding enemy objects to the scene and adding their behaviour
+    add(enemy1);
+    enemyAI(enemy1, "enemy1");
 
-    const enemy3 = createEnemy(64,64, 1661, 294, "enemy3");
-    enemyAI(enemy3, "enemy3")
+    add(enemy2);
+    enemyAI(enemy2, "enemy2");
+
+    add(enemy3);
+    enemyAI(enemy3, "enemy3");
+
     //calling the handle inputs funtion
-    
     handleInputs(player);
-
+    
     //adding invisible walls
     add([
         rect(16, 1760),
