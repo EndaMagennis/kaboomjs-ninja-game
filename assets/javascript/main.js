@@ -1,6 +1,8 @@
-
+//adding a reference to the html canvas element to use as kabooms canvas 
 let gameCanvas = document.querySelector("#game-canvas");
-//initialising kaboom environment
+
+/*The Kaboom library must be initialised before variables related to the library
+can be made. Initialising allows for access to Kabooms built-in functions.*/
 const k = kaboom({
     fullscreen: true,
     canvas: gameCanvas,
@@ -11,7 +13,8 @@ const k = kaboom({
     background: [0,0,0,0]
 });
 
-/*loadSprite() can be take two or three parameters. With two parameters; a string ID, and a filepath, a static sprite is created.
+/*loadSprite() is a Kaboom method which can take two or three parameters. 
+With two parameters; a string ID, and a filepath, a static sprite is created.
 The third parameter can slice a spritesheet horizontally and vertically and create an animation.*/
 
 //loading background image for controlScreen
@@ -681,7 +684,7 @@ function hanldeTouchScreenInputs(){
 };
 
 function restartGame(){
-    wait(2, () => go("Deathr") )
+    wait(2, () => go("Death") )
         
 }
 
