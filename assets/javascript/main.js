@@ -1,3 +1,4 @@
+
 //adding a reference to the html canvas element to use as kabooms canvas 
 let gameCanvas = document.querySelector("#game-canvas");
 
@@ -42,7 +43,7 @@ const touchScreenAttack = loadSprite("touchscreenAttack", "assets/images/button-
 //loading audio assets for game sounds
 const enemyHurtSound = loadSound("hurtSound", "assets/audio/enemy-take-damage.wav");
 const enemyAttackSound = loadSound("enemyAttackSound", "assets/audio/enemy-strike.wav");
-const playerHurtSound = loadSound("playerHurtSound", "assets/audio/player-hurt.wav")
+const playerHurtSound = loadSound("playerHurtSound", "assets/audio/player-hurt.wav");
 const playerAttackSound = loadSound("playerAttackSound", "assets/audio/player-strike.wav");
 const playerLandingSound = loadSound("playerLanding", "assets/audio/landing.wav");
 const gameMusic = loadSound("gameMusic", "assets/audio/game-music.mp3");
@@ -108,7 +109,7 @@ loadSprite("enemyDeath", "assets/sprites/samurai/samurai-dead.png", {
 loadSprite("enemyHurt", "assets/sprites/samurai/samurai-hurt.png"), {
     sliceX: 3, sliceY: 1,
     anims: {"enemyHurtAnim": {from:0, to: 2, loop: false}}
-}
+};
 
 //creating constants for each player sprite
 const playerIdleSprite = "playerIdle";
@@ -161,7 +162,7 @@ function createPlayer(width, height, positionX, positionY, tag){
             isDead: false
         },
         "player"
-    ])
+    ]);
 }
 
 //initialising player object
@@ -197,8 +198,8 @@ function createEnemy(width, height, positionX, positionY, tag) {
             hasAttacked: false,
         },
         tag
-    ])
-};
+    ]);
+}
 
 let enemy1;
 let enemy2;
@@ -263,7 +264,7 @@ const map = [
     "   * ^    |£££££££££££££££££££££/    ^   ^         & &           ^ ^         ",
     " _________ £££*££££*£££££££*££*£___________       ___________________________",
     " # # # # #~~~~~~~~~~~~~~~~~~~~~~# # # # # #       # # # # # # # # # # # # # #"
-]
+];
 
 //Creating a level configuation object, to pass as a second parameter to the addLevel() method to render sprites as a level
 const levelConfig = {
@@ -427,7 +428,7 @@ loadSpriteAtlas("assets/tiles/tileset-1.png", {
         width: 64,
         height: 16
     }
-})
+});
 
 
 
@@ -438,7 +439,7 @@ loadSpriteAtlas("assets/tiles/tileset-1.png", {
 function idle(){
     player.use(sprite(playerIdleSprite));
     player.play(playerIdleAnim);
-};
+}
 
 function moveRight(){
     if(player.curAnim() !== playerMoveAnim && player.isGrounded() && player.isDead === false){
@@ -451,7 +452,7 @@ function moveRight(){
     player.move(player.speed, 0);
 
     
-};
+}
 
 function moveLeft(){
     if(player.curAnim() !== playerMoveAnim && player.isGrounded() && player.isDead === false){
@@ -462,7 +463,7 @@ function moveLeft(){
     };
     if (player.direction !== "left") player.direction = "left";
     player.move(-player.speed, 0);
-};
+}
 
 function playerJump(){
     if(player.curAnim() !== playerJumpAnim && player.isGrounded() && player.isDead === false){
@@ -470,9 +471,9 @@ function playerJump(){
         player.play(playerJumpAnim);
         player.jump(600);
         player.isCurrentlyJumping = true;
-        !player.isGrounded;
+        !player.isGrounded();
     }
-};
+}
 
 function attack(){
     //creating a variable to determine player facing
@@ -496,13 +497,14 @@ function attack(){
             opacity(0),
             "hit"
             ]),
-            play(playerAttackSound)
+            //play is a kaboom function wich plays an audio asset
+            play(playerAttackSound);
         }
         });
         //checking the player facing
         player.flipX = currentFlip;
     }
-};
+}
 
 function checkPlayerHealth(playerHealth){
     if(playerHealth <= 0){
@@ -531,11 +533,11 @@ function enemyAI(agent, tag){
 
     //onStateEnter() determines what will happen when agent enters idle state
     agent.onStateEnter("idle", () => {
-        agent.use(sprite(enemyIdleSprite))
+        agent.use(sprite(enemyIdleSprite));
         agent.play(enemyIdleAnim);
         //waits for 3s and enters move state
         wait(3, () => {
-            agent.enterState("move")
+            agent.enterState("move");
         })
     })
 
@@ -546,7 +548,7 @@ function enemyAI(agent, tag){
         agent.play(enemyMoveAnim);
         //agent walks for 5 seconds then enters idle state
         wait(5, () => {
-            agent.enterState("idle")
+            agent.enterState("idle");
         })
     })
 
@@ -556,16 +558,16 @@ function enemyAI(agent, tag){
         if(flipX%2 === 0){
             //if yes, flipping agent and walking left
             agent.flipX = true;
-            agent.move(-45, agent.speed *dt())
+            agent.move(-45, agent.speed *dt());
         }else{
             //otherwise default and walking right
             agent.flipX = false;
             //dt() is delta time, and calculates time elapsed between frames and smooths movement betweeen frames
-            agent.move(45, agent.speed *dt())
+            agent.move(45, agent.speed *dt());
         }
         
         if(agent.pos.dist(player.pos) < 84 && player.exists() && agent.hasAttacked === false) {
-            agent.enterState("attack")
+            agent.enterState("attack");
         }
 
         if(agent.hasBeenHit){
@@ -574,18 +576,18 @@ function enemyAI(agent, tag){
 
         //checking if agent health is 0, or less
         if(agent.health <= 0){
-            agent.enterState("death")
+            agent.enterState("death");
         }
     })
 
     agent.onStateUpdate("idle", () => {
         //checking if player is within range
         if(agent.pos.dist(player.pos) < 84 && player.exists() && agent.hasAttacked === false) {
-            agent.enterState("attack")
+            agent.enterState("attack");
         }
 
         if(agent.health <= 0){
-            agent.enterState("death")
+            agent.enterState("death");
         }
 
         if(agent.hasBeenHit){
@@ -597,12 +599,12 @@ function enemyAI(agent, tag){
         console.log("Enemy Hurt");
         agent.hasBeenHit = false;
         play(enemyHurtSound);
-        agent.enterState("idle")
+        agent.enterState("idle");
     })
 
     agent.onStateUpdate("hurt", () =>{
         if(agent.health <= 0){
-            agent.enterState("death")
+            agent.enterState("death");
         }
     })
 
@@ -639,7 +641,7 @@ function enemyAI(agent, tag){
         }
 
         if(agent.health <= 0){
-            agent.enterState("death")
+            agent.enterState("death");
         }
 
         if(agent.hasBeenHit){
@@ -652,7 +654,7 @@ function enemyAI(agent, tag){
             agent.play(enemyDeathAnim, {
                 onEnd: () =>{
                     wait(0.5, () =>{
-                        destroy(agent)
+                        destroy(agent);
                     })
                 }
             })
@@ -707,11 +709,11 @@ function handleInputs(){
     onKeyPress("p", () => {
         go("PauseMenu");
     })
-};
+}
 
 
 function restartGame(){
-    wait(2, () => go("Death") )
+    wait(2, () => go("Death") );
 }
 
 /**
@@ -747,7 +749,7 @@ scene("MainMenu", ()=>{
     onClick("controlsButton", () =>{
         go("ControlsMenu")
     })
-})
+});
 
 scene("ControlsMenu", () => {
     //adding the controls image
@@ -767,7 +769,7 @@ scene("ControlsMenu", () => {
     onClick("backButton", () => {
         go("MainMenu")
     })
-})
+});
 
 scene("PauseMenu", () =>{
     pauseCount ++;
@@ -804,7 +806,7 @@ scene("PauseMenu", () =>{
     onClick("main", () => {
         go("MainMenu");
     })
-})
+});
 
 scene("Death", () => {
     pauseCount = 0;
@@ -816,7 +818,7 @@ scene("Death", () => {
     onKeyPress("r", () =>{
         go("MainGame");
     })
-})
+});
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
 scene("MainGame", () =>{
@@ -938,7 +940,7 @@ scene("MainGame", () =>{
         play(playerHurtSound);
         checkPlayerHealth(player.health);
     })
-)})
+)});
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
