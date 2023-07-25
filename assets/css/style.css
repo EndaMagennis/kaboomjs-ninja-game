@@ -43,7 +43,7 @@ h1{
 #game-canvas {
     background: 
         white
-        url('../backgrounds/background-2.png')
+        url('../images/backgrounds/background-2.png')
         center center / cover
         no-repeat
         fixed;
