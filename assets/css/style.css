@@ -39,8 +39,9 @@ h1{
     font-size: 40px;
 }
 
-
 #game-canvas {
+    display: flex;
+    width: 66%;
     background: 
         white
         url('../images/backgrounds/background-2.png')
@@ -64,18 +65,9 @@ a {
     
 }
 
-
-
 @media screen and (max-width: 500px) {
-    header{
-        display: hidden;
-    }
-    footer{
-        display: hidden;
-    }
-
+    
     #game-canvas{
-        width: 100%;
-        height: auto;
+        display: none;
     }
 }
