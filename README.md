@@ -7,8 +7,7 @@ The site can be accessed [here](https://endamagennis.github.io/kaboomjs-ninja-ga
 ---
 ## Background to Jump Ninja Jump
 
-I have loved playing game for most of my life and in recent years have begun learning game development as a hobby, through Unity. This project has given me the opportunity
-to expand my wheelhouse.
+I have loved playing games for most of my life and in recent years have begun learning game development as a hobby. Jump Ninja Jump, or JNJ, is an opportunity to merge my passion for game development with my course through a JavaScript library called [Kaboomjs](https://kaboomjs.com/). The original concept for JNJ was to scale a map and collect a maguffin, but as I grew more familiar with the [Kaboomjs](https://kaboomjs.com/) library, the scope and complexity increased. It is still, by all accounts, a simple game, but the game now encorporates enemys and combat.
 
 ---
 ## User Stories
@@ -22,19 +21,34 @@ to expand my wheelhouse.
 
 ## Features
 
-+ ### Navbar
-
++ ### Main Menu
+    ![Main Menu]("documentation/images/readme-main-menu.jpg")
  --- 
-+ ### Home Page
-    
++ ### Pause Menu
+    ![Pause Menu]("documentation/images/readme-pause-menu.jpg")
 --- 
++ ### Controls Menu
+    ![Controls Menu]("documentation/images/readme-controls-menu.jpg")
+---
++ ### Game Over Screen
+    ![Game Over]("documentation/images/readme-game-over-screen.jpg")
+--- 
++ ### Sprite Animations
+
+---
++ ### Audio
 
 --- 
++ ### Fully Interactive Gamplay
+
+---
+
++ ### Enemy AI System
+
+---
 + ### Footer
 
---- 
-+ ### Thank you page
-
+ 
 --- 
 ## Technologies Used
 
