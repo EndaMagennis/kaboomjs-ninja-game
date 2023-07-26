@@ -1,4 +1,4 @@
-# Jump Ninja Jump
+# Jump Ninja Jump ![banner](documentation\banner-image.jpg)
 
 Jump Ninja Jump is a simple, interactive 2D platformer 
 
@@ -70,7 +70,9 @@ I have loved playing games for most of my life and in recent years have begun le
 ## Design
 
 ### Colour Scheme
-
+- The Header, main and footer consist of simple solid colours
+- Blue-greens to match the predominant colours in the game
+- The game window is the focus, so the webpage is quiet, save for the game title and GitHub logo which pop
 ---
 ### Wireframes
 
@@ -105,10 +107,12 @@ I have loved playing games for most of my life and in recent years have begun le
     This was achieved with [media queries](https://www.w3schools.com/css/css3_mediaqueries.asp), the ['::after' pseudo class](https://www.w3schools.com/cssref/sel_after.php), and the [CSS content property](https://www.w3schools.com/cssref/pr_gen_content.php)
 
 ### Chrome
-
+![Chrome Function](documentation\chrome-run.png)
 ### Edge
+![Edge Function](documentation\edge-run.png)
 
 ### Firefox
+![FireFox Function](documentation\fire-fox-run.png)
 
 
 + ### Manual Testing
@@ -206,7 +210,7 @@ I have loved playing games for most of my life and in recent years have begun le
     For this vaildation I configured the validator to ignore undefined variables as each one was part of the kaboom library and was often a function. The unused variables listed are intended for future implementation.
       
 + ### Accessibility and performance 
-
+![Lighthouse Report](documentation\performance.png)
 ---
 ## Deployment
 - This site was deployed using Github Pages
@@ -230,16 +234,41 @@ I have loved playing games for most of my life and in recent years have begun le
 ---
 
 ## Future improvements
+    - Genuine responsiveness: I hope to find a reliable way to resize and maintain the relative scale and positioning of all objects
 
+    - Touch Screen controls: While Kaboom does have touch screen support, the documentation is lacking in how to implement it. 
+
+    - Modular programming: When starting this project, I had hoped to create multiple scripts, each handling a major aspect of the game. However, even when using a packaging tool in a local server, the external scripts could not be imported, or used. 
 ---
 ## Credits
 
 + #### Content
-        
-+ #### Media
+    - [Using a tile sheet to render sprites](https://www.youtube.com/watch?v=sDeU3rbsuUo)
+    - [Scene flow](https://kaboomjs.com/play?example=scenes)
+    - [Enemy AI system](https://kaboomjs.com/play?example=ai)
+    - [Using a fuction to instatiate player and enemies](https://www.youtube.com/watch?v=TLH0taCeE6I)
     
++ #### Media
+    - [Ninja sprites and animations](https://craftpix.net/freebies/free-ninja-sprite-sheets-pixel-art/)
+    - [Samuri sprites and animations](https://craftpix.net/freebies/free-samurai-pixel-art-sprite-sheets/)
+    - [Grasslands sprite sheet](https://anokolisa.itch.io/basic-140-tiles-grassland-and-mines)
+    - [Burger icon](https://cdn-icons-png.flaticon.com/512/5544/5544492.png)
+    - [Arrow icon](https://cdn-icons-png.flaticon.com/512/109/109618.png)
+    - [Chevron icon](https://cdn-icons-png.flaticon.com/512/25/25283.png)
+    - [Refresh icon](https://cdn0.iconfinder.com/data/icons/glyphpack/41/refresh-512.png)
+    - [Button Jump icon](https://www.maxpixel.net/static/photo/1x/Symbol-Icon-Button-1-One-Number-5433251.png)
+    - [Button Attack icon](https://cdn.pixabay.com/photo/2020/07/24/08/24/icon-5433249_960_720.png)
+    - [Game music](https://pixabay.com/users/muzaproduction-24990238/)
 + #### Tools
+    - [Go Full Page](https://chrome.google.com/webstore/detail/full-page-screen-capture/pmabjgjpcbofkbbeiphkiaanogobokgg?gclid=CjwKCAjwyeujBhA5EiwA5WD7_StwU10jzkViA3oaRKF6qgqXOb5OYcu-fmGcBHNlfklhI1H2dHKP4RoCMDsQAvD_BwE) Used to capture entire page in .png format.
+    
+    - [Lighthouse](https://chrome.google.com/webstore/detail/lighthouse/blipmdconlkpinefehnmjammfjpmpbjk?gclid=CjwKCAjwyeujBhA5EiwA5WD7_StwU10jzkViA3oaRKF6qgqXOb5OYcu-fmGcBHNlfklhI1H2dHKP4RoCMDsQAvD_BwE) Used to check perfomance and accessibilty of each page.
 
+    - [HTML Validator](https://validator.w3.org/) to validate my HTML 
+
+    - [CSS Validator](https://jigsaw.w3.org/css-validator/) to validate my CSS
+
+    - [JSHint](https://jshint.com/) to validate my JavaScript
 ---
 
 ## Acknowledgments
