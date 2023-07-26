@@ -966,4 +966,4 @@ scene("MainGame", () =>{
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
-go("MainGame");
+go("MainMenu");

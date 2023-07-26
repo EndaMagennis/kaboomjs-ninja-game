@@ -74,15 +74,37 @@ I have loved playing games for most of my life and in recent years have begun le
 ---
 ### Wireframes
 
-#### Mobile devices
+#### Desktop
+![Early Game Concept](documentation\wireframes\concept-gamplay.png)
+- The early concept was much simpler. Simply get an item to progress to the next level.
+
+![Main Menu](documentation\wireframes\concept-main-menu.png)
+
+![Pause Menu](documentation\wireframes\concept-pause-menu.png)
+
+![Game Over](documentation\wireframes\concept-game-over.png)
+
+- The menu layouts were basic and would look similiar across devices.
 
 #### Tablets
 
-#### Desktop
+![Tablet Game](documentation\wireframes\concept-gamplay-tablet.png)
+- Touch screen devices would incorporate icons in order to play and navigate menus.
 
+![Tablet Game](documentation\wireframes\concept-gamplay-tablet-landScape.png)
+
+#### Mobile devices
+![Mobile Game](documentation\wireframes\concept-gamplay-phone.png)
+
+- Because verticality was critical to the original concept, landscape on a mobile screen did not seem pertinent
 --- 
 ## Testing
 + ### Responsive Design
+    One drawback of the kaboom library is that the rendered assets are initialised with a height, width and position, not relative to the HTML canvas element, but to the kaboom canvas. When resizng the window in inspector mode, the kaboom canvas responds unpredictably, but when resizing the window normally, it seems to retain some semblance of responviness. In any case, under a screen width of 700px, the user will be greeted to a message explaining that the game is not yet optimised for mobile or tablet.
+    ![Responsive Message](documentation\responsive-message.jpg)
+    This was achieved with [media queries](https://www.w3schools.com/css/css3_mediaqueries.asp), the ['::after' pseudo class](https://www.w3schools.com/cssref/sel_after.php), and the [CSS content property](https://www.w3schools.com/cssref/pr_gen_content.php)
+
+### Chrome
 
 ### Edge
 
@@ -111,6 +133,8 @@ I have loved playing games for most of my life and in recent years have begun le
 || Release "D" | Player returns to idle state | Yes | |
 || Release "A" | Player returns to idle state | Yes | |
 || Press "Space" while holding "A" or "D"| Player jumps while moving in relavant direction| Yes||
+|Footer|
+| | Click on Github logo| Redirects user to my GitHub| Yes | |
 ---
 + ### Bugs And Fixes
     - #### Player would phase trough the ground unexpectedly (fixed)
@@ -173,7 +197,7 @@ I have loved playing games for most of my life and in recent years have begun le
             
 + ### [CSS Validator](https://jigsaw.w3.org/css-validator/)
 
-    ![Valid CSS](documentation/vaild-css.png)
+    ![Valid CSS](documentation/valid-css.png)
 
 + ### [JSHint](https://jshint.com/)
 
