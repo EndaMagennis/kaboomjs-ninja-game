@@ -259,6 +259,8 @@ I have loved playing games for most of my life and in recent years have begun le
     - [Button Jump icon](https://www.maxpixel.net/static/photo/1x/Symbol-Icon-Button-1-One-Number-5433251.png)
     - [Button Attack icon](https://cdn.pixabay.com/photo/2020/07/24/08/24/icon-5433249_960_720.png)
     - [Game music](https://pixabay.com/users/muzaproduction-24990238/)
+    - [Background Image](https://anokolisa.itch.io/basic-140-tiles-grassland-and-mines)
+
 + #### Tools
     - [Go Full Page](https://chrome.google.com/webstore/detail/full-page-screen-capture/pmabjgjpcbofkbbeiphkiaanogobokgg?gclid=CjwKCAjwyeujBhA5EiwA5WD7_StwU10jzkViA3oaRKF6qgqXOb5OYcu-fmGcBHNlfklhI1H2dHKP4RoCMDsQAvD_BwE) Used to capture entire page in .png format.
     
@@ -272,6 +274,12 @@ I have loved playing games for most of my life and in recent years have begun le
 ---
 
 ## Acknowledgments
+- [Iuliia Konovalova](https://github.com/IuliiaKonovalova), my mentor who pushed me to go above an beyond for this project.
 
+- [Alan Bushell](https://github.com/Alan-Bushell), my cohort co-ordinator.
+
+- [The kaboomjs Discord channel](https://discord.gg/XqdndAnT) who were welcoming and patient. Despite not having answers to all of my questions, the users help deepen my understanding, 
+
+- [Code Institute](https://codeinstitute.net/ie/), who have given me the tools and knowledge to persue my goal.
 ---
 
