@@ -278,7 +278,7 @@ I have loved playing games for most of my life and in recent years have begun le
 
 - [Alan Bushell](https://github.com/Alan-Bushell), my cohort co-ordinator.
 
-- [The kaboomjs Discord channel](https://discord.gg/XqdndAnT) who were welcoming and patient. Despite not having answers to all of my questions, the users help deepen my understanding, 
+- [The kaboomjs Discord channel](https://discord.gg/XqdndAnT) who were welcoming and patient. Despite not having answers to all of my questions, the users help deepened my understanding of the library.
 
 - [Code Institute](https://codeinstitute.net/ie/), who have given me the tools and knowledge to persue my goal.
 ---
