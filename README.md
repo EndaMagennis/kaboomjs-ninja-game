@@ -1,4 +1,4 @@
-# Jump Ninja Jump ![banner](documentation\banner-image.jpg)
+# Jump Ninja Jump ![banner](documentation/banner-image.jpg)
 
 Jump Ninja Jump is a simple, interactive 2D platformer 
 
@@ -77,42 +77,42 @@ I have loved playing games for most of my life and in recent years have begun le
 ### Wireframes
 
 #### Desktop
-![Early Game Concept](documentation\wireframes\concept-gamplay.png)
+![Early Game Concept](documentation/wireframes/concept-gamplay.png)
 - The early concept was much simpler. Simply get an item to progress to the next level.
 
-![Main Menu](documentation\wireframes\concept-main-menu.png)
+![Main Menu](documentation/wireframes/concept-main-menu.png)
 
-![Pause Menu](documentation\wireframes\concept-pause-menu.png)
+![Pause Menu](documentation/wireframes/concept-pause-menu.png)
 
-![Game Over](documentation\wireframes\concept-game-over.png)
+![Game Over](documentation/wireframes/concept-game-over.png)
 
 - The menu layouts were basic and would look similiar across devices.
 
 #### Tablets
 
-![Tablet Game](documentation\wireframes\concept-gamplay-tablet.png)
+![Tablet Game](documentation/wireframes/concept-gamplay-tablet.png)
 - Touch screen devices would incorporate icons in order to play and navigate menus.
 
-![Tablet Game](documentation\wireframes\concept-gamplay-tablet-landScape.png)
+![Tablet Game](documentation/wireframes/concept-gamplay-tablet-landScape.png)
 
 #### Mobile devices
-![Mobile Game](documentation\wireframes\concept-gamplay-phone.png)
+![Mobile Game](documentation/wireframes/concept-gamplay-phone.png)
 
 - Because verticality was critical to the original concept, landscape on a mobile screen did not seem pertinent
 --- 
 ## Testing
 + ### Responsive Design
     One drawback of the kaboom library is that the rendered assets are initialised with a height, width and position, not relative to the HTML canvas element, but to the kaboom canvas. When resizng the window in inspector mode, the kaboom canvas responds unpredictably, but when resizing the window normally, it seems to retain some semblance of responviness. In any case, under a screen width of 700px, the user will be greeted to a message explaining that the game is not yet optimised for mobile or tablet.
-    ![Responsive Message](documentation\responsive-message.jpg)
+    ![Responsive Message](documentation/responsive-message.jpg)
     This was achieved with [media queries](https://www.w3schools.com/css/css3_mediaqueries.asp), the ['::after' pseudo class](https://www.w3schools.com/cssref/sel_after.php), and the [CSS content property](https://www.w3schools.com/cssref/pr_gen_content.php)
 
 ### Chrome
-![Chrome Function](documentation\chrome-run.png)
+![Chrome Function](documentation/chrome-run.png)
 ### Edge
-![Edge Function](documentation\edge-run.png)
+![Edge Function](documentation/edge-run.png)
 
 ### Firefox
-![FireFox Function](documentation\fire-fox-run.png)
+![FireFox Function](documentation/fire-fox-run.png)
 
 
 + ### Manual Testing
@@ -144,6 +144,7 @@ I have loved playing games for most of my life and in recent years have begun le
     - #### Player would phase trough the ground unexpectedly (fixed)
         
         In the earlier stages of development, I had many more ground tiles as part of the map. Each of these sprites needed to be renderered during play and would cause frequent stuttering, breaking the collision between player and ground. Removing the large number of tiles, removed the most violent stuttering and allowed for smoother collisions.
+
     - #### When pausing during an action the game would not unpause and would crash (fixed)
     
         When performing an animation, the agent must be using the correct sprite. Because the player was already using a sprit during an action, reinitialising the scene contained the line
@@ -193,6 +194,19 @@ I have loved playing games for most of my life and in recent years have begun le
     - #### [Jumping animation bug](https://youtu.be/QOo6-xfK1dk) ([fixed](https://youtu.be/AnJSKXlirOY))
         
         This was a case of implementing extra checks to make sure the player was finished jumping before returning to an idle state.
+
+    - #### [Player continues run animation when walking off a platform](https://youtu.be/gWT6hts4Qo8) (not fixed)
+        This was a persistent bug throughout development. Once the player collides with a "ground" tag, their .isGrounded() is true. Only jumping sets it to false, or falling. I believe the issue is in the following code but have tried many additional checks to no avail.
+        ````js
+        onUpdate(( )=>{
+            if(player.curAnim() !== playerMoveAnim && player.curAnim() !==     playerAttackAnim && player.curAnim() !== playerJumpAnim && player.isGrounded() && player.curAnim() !== playerDeathAnim && player.isDead === false){
+                idle(); 
+            }
+            //more code
+        });
+        ````
+    - #### Game is prone to stuttering (not fixed)
+        I wasn't sure if the stuttering was due to rendering or internet connection, but occasionally the stuttering can cause loss of collisions.
 ---
 ## Validator testing
 + ### [HTML Validator](https://validator.w3.org/)
@@ -210,7 +224,7 @@ I have loved playing games for most of my life and in recent years have begun le
     For this vaildation I configured the validator to ignore undefined variables as each one was part of the kaboom library and was often a function. The unused variables listed are intended for future implementation.
       
 + ### Accessibility and performance 
-![Lighthouse Report](documentation\performance.png)
+![Lighthouse Report](documentation/performance.png)
 ---
 ## Deployment
 - This site was deployed using Github Pages
@@ -260,6 +274,11 @@ I have loved playing games for most of my life and in recent years have begun le
     - [Button Attack icon](https://cdn.pixabay.com/photo/2020/07/24/08/24/icon-5433249_960_720.png)
     - [Game music](https://pixabay.com/users/muzaproduction-24990238/)
     - [Background Image](https://anokolisa.itch.io/basic-140-tiles-grassland-and-mines)
+    - [Enemy strike sound](https://mixkit.co/free-sound-effects/sword/)
+    - [Enemy take damage sound](https://mixkit.co/free-sound-effects/hurt/)
+    - [Player strike sound](https://mixkit.co/free-sound-effects/sword/)
+    - [Player hurt sound](https://mixkit.co/free-sound-effects/hurt/)
+    - [Landing sound](https://mixkit.co/free-sound-effects/game/)
 
 + #### Tools
     - [Go Full Page](https://chrome.google.com/webstore/detail/full-page-screen-capture/pmabjgjpcbofkbbeiphkiaanogobokgg?gclid=CjwKCAjwyeujBhA5EiwA5WD7_StwU10jzkViA3oaRKF6qgqXOb5OYcu-fmGcBHNlfklhI1H2dHKP4RoCMDsQAvD_BwE) Used to capture entire page in .png format.
