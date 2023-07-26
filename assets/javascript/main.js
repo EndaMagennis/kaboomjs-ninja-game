@@ -11,7 +11,6 @@ kaboom({
     width: 600,
     height: 400,
     scale: 2,
-    debug: true,
     background: [0,0,0,0]
 });
 
@@ -47,6 +46,11 @@ const playerAttackSound = loadSound("playerAttackSound", "assets/audio/player-st
 const playerLandingSound = loadSound("playerLanding", "assets/audio/landing.wav");
 const gameMusic = loadSound("gameMusic", "assets/audio/game-music.mp3");
 
+//creating a variable for a win state
+let enemyCount = 3;
+
+//creating a variable to check when game is paused
+let pauseCount = 0;
 
 //Creating animations for the player character
 //creating player idle animation
@@ -138,7 +142,6 @@ const enemyMoveAnim = "enemyWalkAnim";
 const enemyDeathAnim = "enemyDeathAnim";
 const enemyHurtAnim = "enemyHurtAnim";
 
-let pauseCount = 0;
 /**
  * make() is a kaboom method which can take a single argument or an array and create a game object. 
  * It is similar to add(), but does not add the game object to the scene
@@ -200,6 +203,7 @@ function createEnemy(width, height, positionX, positionY, tag) {
     ]);
 }
 
+//initialising enemies for attributes to be assigned
 let enemy1;
 let enemy2;
 let enemy3;
@@ -650,6 +654,7 @@ function enemyAI(agent, tag){
     });
 
     agent.onStateEnter("death", () => {
+        enemyCount --;
         agent.use(sprite(enemyDeathSprite));
             agent.play(enemyDeathAnim, {
                 onEnd: () =>{
@@ -756,7 +761,7 @@ scene("ControlsMenu", () => {
     add([
         sprite(controlBg),
         scale(0.5),
-        pos(120, 100)
+        pos(150, 100)
     ]);
     //adding a button to return to main menu
     add([
@@ -778,7 +783,7 @@ scene("PauseMenu", () =>{
         pos(240, 50),
     ]);
     add([
-        text("OBJECTIVE:\nDefeat all three enemies\nwithin the time limit", {
+        text("OBJECTIVE:\nDefeat all three enemies", {
             size: 16,
         }),
         
@@ -808,6 +813,18 @@ scene("PauseMenu", () =>{
     });
 });
 
+scene("Victory", () => {
+    pauseCount = 0;
+    add([
+        text("   You Were Victorious\n\n Press 'R' to Restart"),
+        pos(80, 80),
+    ]);
+
+    onKeyPress("r", () =>{
+        go("MainGame");
+    });
+})
+
 scene("Death", () => {
     pauseCount = 0;
     add([
@@ -830,6 +847,7 @@ scene("MainGame", () =>{
         enemy1 = createEnemy(64, 64, 600, 1630, "enemy1");
         enemy2 = createEnemy(64,64, 461, 931, "enemy2");
         enemy3 = createEnemy(64,64, 1661, 294, "enemy3");
+        enemyCount = 3;
     }
     /*addLevel is a kaboom function which uses two parameters; an array of strings, and an object to render a level.
     The characters within the strings are converted to tiles based on the configurations outlined in the object*/
@@ -911,6 +929,10 @@ scene("MainGame", () =>{
         if(player.pos.y > 2000){
             player.health = 0;
             checkPlayerHealth(player.health);
+        }
+
+        if(enemyCount === 0){
+            go("Victory");
         }
     }),
 

@@ -15,8 +15,9 @@ body {
 
 main {
     display: flex;
-    flex: 1 1 auto;
+    flex: 1 0 auto;
     width: 100%;
+    height: auto;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -26,6 +27,7 @@ header{
     flex-direction: column;
     background: rgb(45, 165, 165);
     width: 100%;
+    height: auto;
     padding: 10px;
     border-bottom: 2px solid white;
     color: aliceblue;
@@ -51,6 +53,7 @@ h1{
 footer{
     border-top: 1px solid white;
     width: 100%;
+    height: auto;
     padding: 10px;
     background: rgb(45, 165, 165);
 }
@@ -62,8 +65,12 @@ a {
     
 }
 
-@media screen and (max-width: 500px) {
-    
+@media screen and (max-width: 700px) {
+    main::after{
+        content: "This game is not yet optomized for mobile or tablet";
+        height: 300px;
+    }
+
     #game-canvas{
         display: none;
     }

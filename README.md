@@ -113,17 +113,20 @@ I have loved playing games for most of my life and in recent years have begun le
 || Press "Space" while holding "A" or "D"| Player jumps while moving in relavant direction| Yes||
 ---
 + ### Bugs And Fixes
-    - Player would phase trough the ground unexpectedly (fixed)
-        - In the earlier stages of development, I had many more ground tiles as part of the map. Each of these sprites needed to be renderered during play and would cause frequent stuttering, breaking the collision between player and ground. Removing the large number of tiles, removed the most violent stuttering and allowed for smoother collisions.
-    - When pausing during an action the game would not unpause and would crash (fixed)
-        - When performing an animation, the agent must be using the correct sprite. Because the player was already using a sprit during an action, reinitialising the scene contained the line
+    - #### Player would phase trough the ground unexpectedly (fixed)
+        
+        In the earlier stages of development, I had many more ground tiles as part of the map. Each of these sprites needed to be renderered during play and would cause frequent stuttering, breaking the collision between player and ground. Removing the large number of tiles, removed the most violent stuttering and allowed for smoother collisions.
+    - #### When pausing during an action the game would not unpause and would crash (fixed)
+    
+        When performing an animation, the agent must be using the correct sprite. Because the player was already using a sprit during an action, reinitialising the scene contained the line
         ````js
         player.play("idleAnim");
         ````
         which the player would not have access to.
 
-    - After this solution, a new bug was created. Now after pressing continue during pause, the player would still be in the correct state but all enemies would be reinitialised, and uable to be killed (fixed)
-        - This time a check was introduced to see is the player was going to the game scene from the Main Menu or the pause menu. A variable pauseCount was created and initialised to 0.
+    - #### After this solution, a new bug was created. Now after pressing continue during pause, the player would still be in the correct state but all enemies would be reinitialised, and uable to be killed (fixed)
+
+        This time a check was introduced to see is the player was going to the game scene from the Main Menu or the pause menu. A variable pauseCount was created and initialised to 0.
         ````js
         let pauseCount =0;
         //Later in the code
@@ -150,20 +153,33 @@ I have loved playing games for most of my life and in recent years have begun le
         ````
         This means that the enemies and players will only be initialised if the game has not been paused. Otherwise they will remain in statis, with all of their settings intact. Returning to MainMenu also resets pauseCount to 0.
     
-    - Killing one enemy took three times as many hits and also killed all other enemies (fixed)
-        - In order to reference the enemy I was hitting I had tried to make a for loop and cylce through objects labelled "enemy".
+    - #### Killing one enemy took three times as many hits and also killed all other enemies (fixed)
+    
+        In order to reference the enemy I was hitting I had tried to make a for loop and cylce through objects labelled "enemy".
         While this worked to register the hit, each hit was cylcing through the enemies, meaning each enemy was taking damage, starting with the enemy at the 0th position in the array. Refactoring how the enemy was intantiated and updating the parameters of the onCollide() function fixed this.
 
-    - [Glitcy AI](https://youtu.be/3-czWisVgto) (fixed)
-        - Though careful reading of the documentation around kaboom's [finite state machine](https://kaboomjs.com/#state) and refactoring of enemyAI() function, the AI is much better
+    -  #### [Glitcy AI](https://youtu.be/3-czWisVgto) (fixed)
+    
+        Though careful reading of the documentation around kaboom's [finite state machine](https://kaboomjs.com/#state) and refactoring of enemyAI() function, the AI is much better
 
-    - [Jumping animation bug](https://youtu.be/QOo6-xfK1dk) ([fixed](https://youtu.be/AnJSKXlirOY))
-        - This was a case of implementing extra checks to make sure the player was finished jumping before returning to an idle state.
+    - #### [Jumping animation bug](https://youtu.be/QOo6-xfK1dk) ([fixed](https://youtu.be/AnJSKXlirOY))
+        
+        This was a case of implementing extra checks to make sure the player was finished jumping before returning to an idle state.
 ---
 ## Validator testing
 + ### [HTML Validator](https://validator.w3.org/)
+
+    ![Valid HTML](documentation/valid-html.png)
             
 + ### [CSS Validator](https://jigsaw.w3.org/css-validator/)
+
+    ![Valid CSS](documentation/vaild-css.png)
+
++ ### [JSHint](https://jshint.com/)
+
+    ![Valid JavaScript](documentation/valid-js-hint.png)
+    
+    For this vaildation I configured the validator to ignore undefined variables as each one was part of the kaboom library and was often a function. The unused variables listed are intended for future implementation.
       
 + ### Accessibility and performance 
 
