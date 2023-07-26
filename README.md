@@ -207,6 +207,10 @@ I have loved playing games for most of my life and in recent years have begun le
         ````
     - #### Game is prone to stuttering (not fixed)
         I wasn't sure if the stuttering was due to rendering or internet connection, but occasionally the stuttering can cause loss of collisions.
+
+    - #### Responsive window bug (not fixed)
+        ![Responsive window bug](documentation/responsive-bug.png)
+        HTML and CSS becomes misaligned with the kaboom window. As previously stated this is a fallback of how the library is initialised. Hope to find a fix in the future.
 ---
 ## Validator testing
 + ### [HTML Validator](https://validator.w3.org/)
