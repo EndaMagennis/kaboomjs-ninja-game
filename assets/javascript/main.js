@@ -1,4 +1,3 @@
-
 //adding a reference to the html canvas element to use as kabooms canvas 
 let gameCanvas = document.querySelector("#game-canvas");
 
@@ -6,7 +5,7 @@ let gameCanvas = document.querySelector("#game-canvas");
  * The Kaboom library must be initialised before variables related to the library
  * can be made. Initialising allows for access to Kabooms built-in functions.
  */
-const k = kaboom({
+kaboom({
     fullscreen: true,
     canvas: gameCanvas,
     width: 600,
@@ -106,10 +105,10 @@ loadSprite("enemyDeath", "assets/sprites/samurai/samurai-dead.png", {
 });
 
 //creating an enemy hurt animation
-loadSprite("enemyHurt", "assets/sprites/samurai/samurai-hurt.png"), {
+loadSprite("enemyHurt", "assets/sprites/samurai/samurai-hurt.png", {
     sliceX: 3, sliceY: 1,
     anims: {"enemyHurtAnim": {from:0, to: 2, loop: false}}
-};
+});
 
 //creating constants for each player sprite
 const playerIdleSprite = "playerIdle";
@@ -445,7 +444,7 @@ function moveRight(){
     if(player.curAnim() !== playerMoveAnim && player.isGrounded() && player.isDead === false){
         player.use(sprite(playerMoveSprite));
         player.play(playerMoveAnim);
-    };
+    }
     
     if (player.direction !== "right") player.direction = "right";
 
@@ -460,7 +459,7 @@ function moveLeft(){
         player.play(playerMoveAnim);
         
         
-    };
+    }
     if (player.direction !== "left") player.direction = "left";
     player.move(-player.speed, 0);
 }
@@ -471,7 +470,6 @@ function playerJump(){
         player.play(playerJumpAnim);
         player.jump(600);
         player.isCurrentlyJumping = true;
-        !player.isGrounded();
     }
 }
 
@@ -529,7 +527,7 @@ function enemyAI(agent, tag){
     onCollide("hit", tag, () =>{
         agent.health -= player.damage;
         agent.hasBeenHit = true;
-    })
+    });
 
     //onStateEnter() determines what will happen when agent enters idle state
     agent.onStateEnter("idle", () => {
@@ -538,8 +536,8 @@ function enemyAI(agent, tag){
         //waits for 3s and enters move state
         wait(3, () => {
             agent.enterState("move");
-        })
-    })
+        });
+    });
 
     agent.onStateEnter("move", () => {
         //incrementing the flip variable
@@ -549,8 +547,8 @@ function enemyAI(agent, tag){
         //agent walks for 5 seconds then enters idle state
         wait(5, () => {
             agent.enterState("idle");
-        })
-    })
+        });
+    });
 
     //performs update checks and locic checks during current state
     agent.onStateUpdate("move", () => {
@@ -571,14 +569,14 @@ function enemyAI(agent, tag){
         }
 
         if(agent.hasBeenHit){
-            agent.enterState("hurt");
+            agent.enterState("hurt");    
         }
 
         //checking if agent health is 0, or less
         if(agent.health <= 0){
             agent.enterState("death");
         }
-    })
+    });
 
     agent.onStateUpdate("idle", () => {
         //checking if player is within range
@@ -593,20 +591,22 @@ function enemyAI(agent, tag){
         if(agent.hasBeenHit){
             agent.enterState("hurt");
         }
-    })
+    });
 
     agent.onStateEnter("hurt", () =>{
-        console.log("Enemy Hurt");
+        agent.use(sprite(enemyHurtSprite));
+        agent.play(enemyHurtAnim, {onEnd: () =>{
+            agent.enterState("idle");
+        }});
         agent.hasBeenHit = false;
         play(enemyHurtSound);
-        agent.enterState("idle");
-    })
+    });
 
     agent.onStateUpdate("hurt", () =>{
         if(agent.health <= 0){
             agent.enterState("death");
         }
-    })
+    });
 
     agent.onStateEnter("attack", () => {
         agent.hasAttacked = true;
@@ -625,17 +625,17 @@ function enemyAI(agent, tag){
                 pos(strikeZoneX, strikeZoneY),
                 opacity(0),
                 "enemyHit"
-            ])
+            ]);
             agent.enterState("idle");
-        }})
-    })
+        }});
+    });
 
     agent.onStateUpdate("attack", () => {
         wait(2, () => {
             agent.hasAttacked = false;
-        })
+        });
         if(player.pos.x < agent.pos.x){
-            agent.flipX =true
+            agent.flipX =true;
         }else{
             agent.flipX = false;
         }
@@ -647,18 +647,18 @@ function enemyAI(agent, tag){
         if(agent.hasBeenHit){
             agent.enterState("hurt");
         }
-    })
+    });
 
     agent.onStateEnter("death", () => {
-        agent.use(sprite(enemyDeathSprite))
+        agent.use(sprite(enemyDeathSprite));
             agent.play(enemyDeathAnim, {
                 onEnd: () =>{
                     wait(0.5, () =>{
                         destroy(agent);
-                    })
+                    });
                 }
-            })
-    })
+            });
+    });
 }
 
 /**
@@ -670,33 +670,33 @@ function handleInputs(){
     if(player.isDead === false){
         onKeyDown("d",() =>{
             moveRight();
-        })
+        });
 
         //onKeyPress is a built in method which registers an instance of a key press
         onKeyPress("e", () => {
             attack();
-        })
+        });
 
         //onKeyRelease is a built in method which registers when a button is released
         onKeyRelease("d", () => {
             if(player.isGrounded()){
                 idle();
             }
-        })
+        });
         //onKeyDown is a built in method which registers continuous press
         onKeyDown("a",() =>{
             moveLeft();
-        })
+        });
 
         onKeyRelease("a", () => {
             if(player.isGrounded()){
                 idle();
             }
-        })
+        });
 
         onKeyPress("space", () => {
             playerJump();
-        })
+        });
 
     }
 
@@ -704,11 +704,11 @@ function handleInputs(){
         destroy(player);
         destroyAll("enemy");
         go("MainMenu");
-    })
+    });
 
     onKeyPress("p", () => {
         go("PauseMenu");
-    })
+    });
 }
 
 
@@ -732,7 +732,7 @@ scene("MainMenu", ()=>{
         scale(0.5),
         area(),
         "startButton"
-    ])
+    ]);
     //adding controls menu button
     add([
         sprite(controlsButton),
@@ -740,15 +740,15 @@ scene("MainMenu", ()=>{
         scale(0.5),
         area(),
         "controlsButton"
-    ])
+    ]);
     //onClick registers an interaction with the area() component of an object
     onClick("startButton", () =>{
-        go("MainGame")
-    })
+        go("MainGame");
+    });
 
     onClick("controlsButton", () =>{
-        go("ControlsMenu")
-    })
+        go("ControlsMenu");
+    });
 });
 
 scene("ControlsMenu", () => {
@@ -757,18 +757,18 @@ scene("ControlsMenu", () => {
         sprite(controlBg),
         scale(0.5),
         pos(120, 100)
-    ])
+    ]);
     //adding a button to return to main menu
     add([
         sprite(backToMenuButton),
         scale(0.5),
         area(),
         "backButton"
-    ])
+    ]);
 
     onClick("backButton", () => {
-        go("MainMenu")
-    })
+        go("MainMenu");
+    });
 });
 
 scene("PauseMenu", () =>{
@@ -776,36 +776,36 @@ scene("PauseMenu", () =>{
     add([
         text("Paused"),
         pos(240, 50),
-    ])
+    ]);
     add([
         text("OBJECTIVE:\nDefeat all three enemies\nwithin the time limit", {
             size: 16,
         }),
         
         pos(230, 300),
-    ])
+    ]);
     add([
         sprite(continueButton),
         scale(0.5),
         pos(250, 160),
         area(),
         "continue"
-    ])
+    ]);
     add([
         sprite(mainMenuButton),
         scale(0.5),
         pos(250, 100),
         area(),
         "main"
-    ])
+    ]);
 
     onClick("continue", () =>{
-        go("MainGame")
-    })
+        go("MainGame");
+    });
 
     onClick("main", () => {
         go("MainMenu");
-    })
+    });
 });
 
 scene("Death", () => {
@@ -813,11 +813,11 @@ scene("Death", () => {
     add([
         text("   You Were Defeated\n\n Press 'R' to Restart"),
         pos(80, 80),
-    ])
+    ]);
 
     onKeyPress("r", () =>{
         go("MainGame");
-    })
+    });
 });
 
 //The MainGame scene holds the logic of the first, and currently, only level in the game 
@@ -864,14 +864,14 @@ scene("MainGame", () =>{
         body({isStatic: true}),
         opacity(0),
         pos(0, 0)
-    ])
+    ]);
     add([
         rect(16, 1760),
         area(),
         body({isStatic: true}),
         opacity(0),
         pos(2448, 0)
-    ])
+    ]);
 
     //checking the update conditions of the player
     player.onUpdate(()=>{
@@ -887,12 +887,12 @@ scene("MainGame", () =>{
         && player.curAnim() !== playerJumpAnim && player.isGrounded() 
         && player.curAnim() !== playerDeathAnim && player.isDead === false){
             idle(); 
-        };
+        }
 
         if(player.curAnim() !== playerJumpAnim && !player.isGrounded() && player.heightDelta > 0) {
             player.use(sprite(playerJumpSprite));
             player.play(playerJumpAnim);
-        };
+        }
 
         if(player.curAnim() !== playerDeathAnim && player.isDead === true){
             player.use(sprite(playerDeathSprite));
@@ -906,7 +906,7 @@ scene("MainGame", () =>{
             player.flipX = true;
         } else{
             player.flipX = false;
-        };
+        }
 
         if(player.pos.y > 2000){
             player.health = 0;
@@ -918,29 +918,29 @@ scene("MainGame", () =>{
     
     //check if the player is touching the ground and set isGrounded to true
     onCollide("player", "ground", () => {
-        player.isGrounded;
-        !player.isCurrentlyJumping;
+        player.isGrounded();
+        player.isCurrentlyJumping = false;
     }),
 
     //removing the hit boxes to avoid accidental collisions
     onAdd("enemyHit", () => {
         wait(0.2, ()=> {
-            destroyAll("enemyHit")
-        })
+            destroyAll("enemyHit");
+        });
     }),
 
     onAdd("hit", () => {
         wait(0.2, () =>{
-            destroyAll("hit")
-        })
+            destroyAll("hit");
+        });
     }),
     //checking if the player gets hit
     onCollide("player", "enemyHit", (enemy) =>{
         player.health -= enemy.damage;
         play(playerHurtSound);
         checkPlayerHealth(player.health);
-    })
-)});
+    }));
+ });
 
 /*go() is a kaboom function which takes a scene ID as a parameter and goes to that scene.
 Can also pass an args parameter in oreder to, for example, reset or reinitialise the scene*/
